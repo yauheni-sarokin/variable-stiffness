@@ -51,3 +51,10 @@ class ConcreteFileReader(FileReader):
         # Close file after reading
         file_to_read.close()
         return ConcreteContent(content)
+
+
+class EntityGroupByVoltage(EntityGroup):
+    pass
+
+class EntityGroupByCurrent(EntityGroup):
+    pass

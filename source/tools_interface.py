@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import List
 
 
 class Entity(ABC):
 
-    def __init__(self, voltage: float, current: float, force: float, displacement: float, time: int, cycle: int) -> None:
+    def __init__(self, voltage: float, current: float, force: float, displacement: float, time: int,
+                 cycle: int) -> None:
         self._voltage = voltage
         self._current = current
         self._force = force
@@ -66,3 +66,18 @@ class FileReader(ABC):
     @abstractmethod
     def parse_file_content(self) -> Content:
         pass
+
+
+class EntityGroup(ABC):
+    """
+    Entities can be divided into many groups,
+    this class is abstract and provide already divided
+    entities
+    """
+
+    def __init__(self, list: List[Entity]) -> None:
+        self._list = list
+
+    @property
+    def entities(self):
+        return self._list
