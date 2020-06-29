@@ -14,7 +14,7 @@ class Entity(ABC):
         self._cycle = cycle
 
     @property
-    def voltage(self):
+    def voltage(self) -> float:
         return self._voltage
 
     @property
@@ -75,9 +75,33 @@ class EntityGroup(ABC):
     entities
     """
 
-    def __init__(self, list: List[Entity]) -> None:
-        self._list = list
+    def __init__(self) -> None:
+        self._list = []
 
     @property
-    def entities(self):
+    def entities(self) -> List[Entity]:
         return self._list
+
+
+"""
+Abstract factory pattern
+"""
+
+
+class EntityGroupCreator(ABC):
+
+    def __init__(self, entities: List[Entity]) -> None:
+        self._entities = entities
+
+    @abstractmethod
+    def divide_entities_by_voltage(self, voltage_round=1) -> List[EntityGroup]:
+        """
+        Entities are divided into voltage groups
+        :param voltage_round: How many float signs to round
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def divide_entities_by_current(self) -> List[EntityGroup]:
+        pass

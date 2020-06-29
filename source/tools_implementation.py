@@ -12,7 +12,7 @@ class ConcreteContent(Content):
         self._content = content
 
     def get_entities_from_content(self) -> List[Entity]:
-        entities_list: List[Entity] = [Entity]
+        entities_list: List[Entity] = []
 
         for line in self._content:
             # line is a string that contains data, so string have to be divided
@@ -31,6 +31,7 @@ class ConcreteContent(Content):
             cycle = int(data[5].strip())
 
             entity = ConcreteEntity(voltage, current, force, displacement, time, cycle)
+
             entities_list.append(entity)
 
         return entities_list
@@ -50,11 +51,64 @@ class ConcreteFileReader(FileReader):
 
         # Close file after reading
         file_to_read.close()
+
         return ConcreteContent(content)
 
 
+"""
+Разбиение сущностей по группам
+"""
+
+
 class EntityGroupByVoltage(EntityGroup):
-    pass
+
+    def __init__(self, voltage: float) -> None:
+        super().__init__()
+        self._voltage = voltage
+
+    @property
+    def entities(self) -> List[Entity]:
+        return self._list
+
+    @property
+    def voltage(self) -> float:
+        return self._voltage
+
+    def append(self, entity: Entity) -> None:
+        self._list.append(entity)
+
 
 class EntityGroupByCurrent(EntityGroup):
     pass
+
+
+class ConcreteEntityGroupCreator(EntityGroupCreator):
+
+    def divide_entities_by_voltage(self, voltage_round=1) -> List[EntityGroup]:
+        # All entities from content
+        entities = self._entities
+
+        # iterator mechanism
+
+        current_v = round(entities[0].voltage, voltage_round)
+
+        current_entities_group = EntityGroupByVoltage(current_v)
+        entities_group_list = [current_entities_group]
+
+        # iterate all entities
+        for entity in entities:
+            voltage = entity.voltage
+            voltage_rounded = round(voltage, voltage_round)
+            if current_v == voltage_rounded:
+                current_entities_group.append(entity)
+            else:
+                current_v = voltage_rounded
+                current_entities_group = EntityGroupByVoltage(current_v)
+                entities_group_list.append(current_entities_group)
+                current_entities_group.append(entity)
+
+        return entities_group_list
+
+    def divide_entities_by_current(self) -> List[EntityGroup]:
+        # todo
+        return EntityGroupByCurrent()
