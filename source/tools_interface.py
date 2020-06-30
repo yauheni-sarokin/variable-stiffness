@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from enum import Enum, auto
+from enum import Enum
 from typing import List
 
 
@@ -11,7 +11,7 @@ class EntityProperty(Enum):
     DISPLACEMENT = {'name': 'displacement', 'units': 'mm'}
     TIME = {'name': 'time', 'units': 'ms'}
     CYCLE = {'name': 'cycle', 'units': 'cycles'}
-    # NO_GROUP = auto()
+    NO_GROUP = {'name': 'no group', 'units': 'no units'}
 
 
 class Entity(ABC):
@@ -159,6 +159,10 @@ class EntityGroupCreator(ABC):
 
     @abstractmethod
     def divide_entities_by_cycle(self) -> List[EntityGroup]:
+        pass
+
+    @abstractmethod
+    def get_entities_groups_without_division(self) -> EntityGroup:
         pass
 
 

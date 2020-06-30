@@ -84,6 +84,12 @@ class EntityGroupByCurrent(EntityGroup):
         return self.current
 
 
+class EntityGroupNoDivision(EntityGroup):
+
+    def __init__(self) -> None:
+        super().__init__(EntityProperty.NO_GROUP)
+
+
 class ConcreteEntityGroupCreator(EntityGroupCreator):
 
     def divide_entities_by_voltage(self, voltage_round=1) -> List[EntityGroup]:
@@ -119,6 +125,17 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
         # todo
         pass
 
+    def get_entities_groups_without_division(self) -> EntityGroup:
+        # All entities from content
+        entities = self._entities
+
+        entity_group = EntityGroupNoDivision()
+
+        for entity in entities:
+            entity_group.append(entity)
+
+        return entity_group
+
 
 class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
@@ -144,7 +161,7 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         x_name = x_axis_property.value['name']
         y_units = y_axis_property.value['units']
         y_name = y_axis_property.value['name']
-        title = f"{x_name} - {y_name}"
+        title = f"{y_name} - {x_name}"
 
         ax.set(xlabel=x_units, ylabel=y_units, title=title)
 
