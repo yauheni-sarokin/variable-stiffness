@@ -143,9 +143,11 @@ class EntityGroup(ABC):
 Abstract factory pattern
 """
 
+
 class EntityGroupSlope(Enum):
     SLOPE_UP = {'name': 'slope up'}
     SLOPE_DOWN = {'name': 'slope down'}
+
 
 class EntityGroupCreator(ABC):
     """
@@ -177,7 +179,8 @@ class EntityGroupCreator(ABC):
     def divide_entities_by_slope(self,
                                  entity_property: EntityProperty,
                                  property_value: float,
-                                 slope: EntityGroupSlope = EntityGroupSlope.SLOPE_UP) -> List[EntityGroup]:
+                                 slope: EntityGroupSlope = EntityGroupSlope.SLOPE_UP) \
+            -> List[EntityGroup]:
         pass
 
 
@@ -201,4 +204,3 @@ class EntityGroupPlotter(ABC):
     def plot_group(self, entity_group: EntityGroup,
                    x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
         pass
-

@@ -162,8 +162,8 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
     def divide_entities_by_slope(self,
                                  entity_property: EntityProperty,
                                  property_value: float,
-                                 slope: EntityGroupSlope = EntityGroupSlope.SLOPE_UP) -> List[
-        EntityGroup]:
+                                 slope: EntityGroupSlope = EntityGroupSlope.SLOPE_UP) \
+            -> List[EntityGroup]:
         entities = self._entities
 
         # Following code from initial program, rewrite in case
