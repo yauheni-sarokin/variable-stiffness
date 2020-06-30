@@ -20,3 +20,8 @@ if __name__ == '__main__':
     print(f"How many groups with entities by voltage : {(len(entities_by_voltage))}")
 
     # entities = entities_by_voltage[3].entities
+
+    plotter: EntityGroupPlotter = ConcreteEntityGroupPlotter()
+
+    plotter.plot_group(entities_by_voltage[1], EntityProperty.DISPLACEMENT,
+                       EntityProperty.FORCE)

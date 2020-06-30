@@ -3,6 +3,17 @@ from enum import Enum, auto
 from typing import List
 
 
+# Enumeration of entity properties
+class EntityProperty(Enum):
+    VOLTAGE = {'name': 'voltage', 'units': 'V'}
+    CURRENT = {'name': 'current', 'units': 'mA/uA'}
+    FORCE = {'name': 'force', 'units': 'uN'}
+    DISPLACEMENT = {'name': 'displacement', 'units': 'mm'}
+    TIME = {'name': 'time', 'units': 'ms'}
+    CYCLE = {'name': 'cycle', 'units': 'cycles'}
+    # NO_GROUP = auto()
+
+
 class Entity(ABC):
 
     def __init__(self, voltage: float, current: float, force: float, displacement: float,
@@ -39,6 +50,22 @@ class Entity(ABC):
     def cycle(self):
         return self._cycle
 
+    def get_property(self, entity_property: EntityProperty) -> float:
+        if entity_property == entity_property.VOLTAGE:
+            return self._voltage
+        elif entity_property == entity_property.CURRENT:
+            return self._current
+        elif entity_property == entity_property.FORCE:
+            return self._force
+        elif entity_property == entity_property.DISPLACEMENT:
+            return self._displacement
+        elif entity_property == entity_property.TIME:
+            return self._time
+        elif entity_property == entity_property.CYCLE:
+            return self._cycle
+        else:
+            pass
+
 
 class Content(ABC):
 
@@ -70,16 +97,6 @@ class FileReader(ABC):
         pass
 
 
-# Enumeration of entity properties
-class EntityProperty(Enum):
-    VOLTAGE = auto()
-    CURRENT = auto()
-    FORCE = auto()
-    DISPLACEMENT = auto()
-    TIME = auto()
-    CYCLE = auto()
-
-
 class EntityGroup(ABC):
     """
     Entities can be divided into many groups,
@@ -106,6 +123,16 @@ class EntityGroup(ABC):
         """
         return self._entity_property
 
+    def get_array_of_properties(self, entity_property: EntityProperty) -> List[float]:
+        # create list with all possible properties
+        properties_list = []
+
+        for entity in self.entities:
+            get_property = entity.get_property(entity_property)
+            properties_list.append(get_property)
+
+        return properties_list
+
 
 """
 Abstract factory pattern
@@ -128,4 +155,30 @@ class EntityGroupCreator(ABC):
 
     @abstractmethod
     def divide_entities_by_current(self) -> List[EntityGroup]:
+        pass
+
+    @abstractmethod
+    def divide_entities_by_cycle(self) -> List[EntityGroup]:
+        pass
+
+
+class EntityGroupPlotter(ABC):
+
+    def __init__(self) -> None:
+        self._entity_groups: List[EntityGroup] = []
+
+    @property
+    def entity_group(self):
+        return self._entity_groups
+
+    def add_entity_group(self, entity_group: EntityGroup) -> None:
+        """
+        add entity group to plot to pool
+        :return: None
+        """
+        self._entity_groups.append(entity_group)
+
+    @abstractmethod
+    def plot_group(self, entity_group: EntityGroup,
+                   x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
         pass

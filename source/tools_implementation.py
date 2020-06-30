@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from tools_interface import *
 
 
@@ -112,3 +114,38 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
     def divide_entities_by_current(self) -> List[EntityGroup]:
         # todo
         pass
+
+    def divide_entities_by_cycle(self) -> List[EntityGroup]:
+        # todo
+        pass
+
+
+class ConcreteEntityGroupPlotter(EntityGroupPlotter):
+
+    def plot_group(self, entity_group: EntityGroup,
+                   x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
+        """
+        Plot entity groups from the pool
+        :param entity_group:
+        :param x_axis_property:
+        :param y_axis_property:
+        :return:
+        """
+
+        # get x, y array
+        x = entity_group.get_array_of_properties(x_axis_property)
+        y = entity_group.get_array_of_properties(y_axis_property)
+
+        fig, ax = plt.subplots()
+
+        ax.plot(x, y)
+
+        x_units = x_axis_property.value['units']
+        x_name = x_axis_property.value['name']
+        y_units = y_axis_property.value['units']
+        y_name = y_axis_property.value['name']
+        title = f"{x_name} - {y_name}"
+
+        ax.set(xlabel=x_units, ylabel=y_units, title=title)
+
+        plt.show()
