@@ -257,3 +257,34 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         ax.set(xlabel=x_units, ylabel=y_units, title=title)
 
         plt.show()
+
+    def plot_groups(self, x_axis_property: EntityProperty,
+                    y_axis_property: EntityProperty) -> None:
+        """
+        Plot entity groups from the pool
+        :param x_axis_property:
+        :param y_axis_property:
+        :return:
+        """
+
+        entity_groups = self._entity_groups
+
+
+
+        fig, ax = plt.subplots()
+
+        for entity_group in entity_groups:
+            # get x, y array
+            x = entity_group.get_array_of_properties(x_axis_property)
+            y = entity_group.get_array_of_properties(y_axis_property)
+            ax.plot(x, y)
+
+        x_units = x_axis_property.value['units']
+        x_name = x_axis_property.value['name']
+        y_units = y_axis_property.value['units']
+        y_name = y_axis_property.value['name']
+        title = f"{y_name} - {x_name}"
+
+        ax.set(xlabel=x_units, ylabel=y_units, title=title)
+
+        plt.show()

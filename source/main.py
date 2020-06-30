@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     print(f"How many groups with entities by voltage : {(len(entities_by_voltage))}")
 
-    entity_group = entities_by_voltage[3]
+    entity_group = entities_by_voltage[1]
 
     print(f"How many entities in one group by voltage: {len(entity_group.entities)}")
 
@@ -34,7 +34,15 @@ if __name__ == '__main__':
 
     plotter: EntityGroupPlotter = ConcreteEntityGroupPlotter()
 
-    plotter.plot_group(entities_by_slope[20], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    # plotter.plot_group(entities_by_slope[20], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
+    # plotter.add_entity_group(entities_by_slope[10])
+    # plotter.add_entity_group(entities_by_slope[11])
+    # plotter.add_entity_group(entities_by_slope[12])
+
+    plotter.add_entity_groups(entities_by_slope)
+
+    plotter.plot_groups(EntityProperty.TIME, EntityProperty.CURRENT)
 
     # plotter.plot_group(entities_by_voltage[3], EntityProperty.TIME, EntityProperty.CURRENT)
 

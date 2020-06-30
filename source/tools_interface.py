@@ -200,7 +200,17 @@ class EntityGroupPlotter(ABC):
         """
         self._entity_groups.append(entity_group)
 
+    def add_entity_groups(self, entity_groups: List[EntityGroup]) -> None:
+        self._entity_groups.extend(entity_groups)
+
     @abstractmethod
     def plot_group(self, entity_group: EntityGroup,
-                   x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
+                   x_axis_property: EntityProperty,
+                   y_axis_property: EntityProperty) -> None:
+        pass
+
+    @abstractmethod
+    def plot_groups(self,
+                    x_axis_property: EntityProperty,
+                    y_axis_property: EntityProperty) -> None:
         pass
