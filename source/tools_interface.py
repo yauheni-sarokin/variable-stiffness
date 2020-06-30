@@ -104,8 +104,9 @@ class EntityGroup(ABC):
     entities
     """
 
-    def __init__(self, entity_property: EntityProperty) -> None:
+    def __init__(self, entity_property: EntityProperty, property_value: float = None) -> None:
         self._entity_property = entity_property
+        self._property_value = property_value
         self._list = []
 
     @property
@@ -123,6 +124,10 @@ class EntityGroup(ABC):
         """
         return self._entity_property
 
+    @property
+    def property_value(self):
+        return self._property_value
+
     def get_array_of_properties(self, entity_property: EntityProperty) -> List[float]:
         # create list with all possible properties
         properties_list = []
@@ -138,8 +143,15 @@ class EntityGroup(ABC):
 Abstract factory pattern
 """
 
+class EntityGroupSlope(Enum):
+    SLOPE_UP = {'name': 'slope up'}
+    SLOPE_DOWN = {'name': 'slope down'}
 
 class EntityGroupCreator(ABC):
+    """
+    Accepts entities as list and divide it into groups
+    and return EntityGroup divided by properties
+    """
 
     def __init__(self, entities: List[Entity]) -> None:
         self._entities = entities
@@ -158,11 +170,14 @@ class EntityGroupCreator(ABC):
         pass
 
     @abstractmethod
-    def divide_entities_by_cycle(self) -> List[EntityGroup]:
+    def get_entities_group_without_division(self) -> EntityGroup:
         pass
 
     @abstractmethod
-    def get_entities_groups_without_division(self) -> EntityGroup:
+    def divide_entities_by_slope(self,
+                                 entity_property: EntityProperty,
+                                 property_value: float,
+                                 slope: EntityGroupSlope = EntityGroupSlope.SLOPE_UP) -> List[EntityGroup]:
         pass
 
 
@@ -186,3 +201,4 @@ class EntityGroupPlotter(ABC):
     def plot_group(self, entity_group: EntityGroup,
                    x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
         pass
+

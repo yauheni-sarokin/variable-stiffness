@@ -19,16 +19,29 @@ if __name__ == '__main__':
 
     print(f"How many groups with entities by voltage : {(len(entities_by_voltage))}")
 
-    # entities = entities_by_voltage[3].entities
+    entity_group = entities_by_voltage[3]
+
+    print(f"How many entities in one group by voltage: {len(entity_group.entities)}")
+
+    entities_group_creator = ConcreteEntityGroupCreator(entity_group.entities)
+
+    entity_property = entity_group.entity_property
+    value = entity_group.property_value
+
+    entities_by_slope = entities_group_creator.divide_entities_by_slope(entity_property, value)
+
+    print(f"How many groups by slopes are in one group by voltage: {len(entities_by_slope)}")
 
     plotter: EntityGroupPlotter = ConcreteEntityGroupPlotter()
 
+    plotter.plot_group(entities_by_slope[20], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
     # plotter.plot_group(entities_by_voltage[3], EntityProperty.TIME, EntityProperty.CURRENT)
 
-    without_division = entity_group_creator.get_entities_groups_without_division()
+    # without_division = entity_group_creator.get_entities_groups_without_division()
 
-    print(type(entities_by_voltage[3]))
-    print(type(without_division))
+    # print(type(entities_by_voltage[3]))
+    # print(type(without_division))
 
-    plotter.plot_group(without_division, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-    plotter.plot_group(without_division, EntityProperty.TIME, EntityProperty.CURRENT)
+    # plotter.plot_group(without_division, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    # plotter.plot_group(without_division, EntityProperty.TIME, EntityProperty.CURRENT)
