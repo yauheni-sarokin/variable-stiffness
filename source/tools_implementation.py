@@ -9,7 +9,7 @@ class ConcreteContent(Content):
 
     def __init__(self, content: List[str]) -> None:
         content.remove(content[0])
-        self._content = content
+        super().__init__(content)
 
     def get_entities_from_content(self) -> List[Entity]:
         entities_list: List[Entity] = []
@@ -41,7 +41,7 @@ class ConcreteFileReader(FileReader):
 
     def __init__(self, file: str) -> None:
         # todo add exception handler
-        self._file = file
+        super().__init__(file)
 
     def parse_file_content(self) -> Content:
         # Set file with test data to read, r means read
@@ -69,8 +69,6 @@ class EntityGroupByVoltage(EntityGroup):
     @property
     def voltage(self) -> float:
         return self._voltage
-
-
 
 
 class EntityGroupByCurrent(EntityGroup):
@@ -113,4 +111,4 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
 
     def divide_entities_by_current(self) -> List[EntityGroup]:
         # todo
-        return EntityGroupByCurrent()
+        pass

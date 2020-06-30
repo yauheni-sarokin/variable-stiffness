@@ -20,4 +20,3 @@ if __name__ == '__main__':
     print(f"How many groups with entities by voltage : {(len(entities_by_voltage))}")
 
     # entities = entities_by_voltage[3].entities
-
