@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import List
+from enum import Enum, auto
 
 
 class Entity(ABC):
 
-    def __init__(self, voltage: float, current: float, force: float, displacement: float, time: int,
-                 cycle: int) -> None:
+    def __init__(self, voltage: float, current: float, force: float, displacement: float, time: float,
+                 cycle: float) -> None:
         self._voltage = voltage
         self._current = current
         self._force = force
@@ -67,6 +68,14 @@ class FileReader(ABC):
     def parse_file_content(self) -> Content:
         pass
 
+#Enumeration of entity properties
+class EntityProperty(Enum):
+    VOLTAGE = auto()
+    CURRENT = auto()
+    FORCE = auto()
+    DISPLACEMENT = auto()
+    TIME = auto()
+    CYCLE = auto()
 
 class EntityGroup(ABC):
     """
@@ -75,13 +84,24 @@ class EntityGroup(ABC):
     entities
     """
 
-    def __init__(self) -> None:
+    def __init__(self, entity_property: EntityProperty) -> None:
+        self._entity_property = entity_property
         self._list = []
 
     @property
     def entities(self) -> List[Entity]:
         return self._list
 
+    def append(self, entity: Entity) -> None:
+        self._list.append(entity)
+
+    @property
+    def entity_property(self):
+        """
+        Contains property by which group is formed
+        :return: Returns enumeration value
+        """
+        return self._entity_property
 
 """
 Abstract factory pattern

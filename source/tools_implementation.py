@@ -26,9 +26,9 @@ class ConcreteContent(Content):
             # 4th row is a displacement in mm, float
             displacement = float(data[3].strip())
             # 5th row is a time in ms, int
-            time = int(data[4].strip())
+            time = float(data[4].strip())
             # 6th row is a number of cycle, int
-            cycle = int(data[5].strip())
+            cycle = float(data[5].strip())
 
             entity = ConcreteEntity(voltage, current, force, displacement, time, cycle)
 
@@ -63,23 +63,25 @@ class ConcreteFileReader(FileReader):
 class EntityGroupByVoltage(EntityGroup):
 
     def __init__(self, voltage: float) -> None:
-        super().__init__()
+        super().__init__(EntityProperty.VOLTAGE)
         self._voltage = voltage
-
-    @property
-    def entities(self) -> List[Entity]:
-        return self._list
 
     @property
     def voltage(self) -> float:
         return self._voltage
 
-    def append(self, entity: Entity) -> None:
-        self._list.append(entity)
+
 
 
 class EntityGroupByCurrent(EntityGroup):
-    pass
+
+    def __init__(self, current: float) -> None:
+        super().__init__(EntityProperty.CURRENT)
+        self._current = current
+
+    @property
+    def current(self) -> float:
+        return self.current
 
 
 class ConcreteEntityGroupCreator(EntityGroupCreator):
