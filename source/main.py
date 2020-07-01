@@ -49,7 +49,8 @@ if __name__ == '__main__':
 
     plotter.add_entity_groups(group_by_slope.children)
 
-    plotter.plot_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    # plotter.plot_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    plotter.plot_groups(EntityProperty.TIME, EntityProperty.VOLTAGE)
 
 """    
 

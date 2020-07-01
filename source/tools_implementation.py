@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+import Colors
 from tools_interface import *
 
 
@@ -282,13 +283,17 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
         entity_groups = self._entity_groups
 
+        # get color hex's
+        color_gradient = Colors.get_color_gradient_array(
+            len(entity_groups), Colors.ColorGradients.TIMBER)
+
         fig, ax = plt.subplots()
 
-        for entity_group in entity_groups:
+        for entity_group, color in zip(entity_groups, color_gradient):
             # get x, y array
             x = entity_group.get_array_of_properties(x_axis_property)
             y = entity_group.get_array_of_properties(y_axis_property)
-            ax.plot(x, y)
+            ax.plot(x, y, color=color)
 
         x_units = x_axis_property.value['units']
         x_name = x_axis_property.value['name']
