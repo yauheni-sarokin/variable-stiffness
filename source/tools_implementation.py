@@ -3,8 +3,22 @@ import matplotlib.pyplot as plt
 from tools_interface import *
 
 
-class ConcreteEntity(Entity):
-    pass
+class ConcreteFileReader(FileReader):
+
+    def __init__(self, file: str) -> None:
+        # todo add exception handler
+        super().__init__(file)
+
+    def parse_file_content(self) -> Content:
+        # Set file with test data to read, r means read
+        file_to_read = open(self._file, "r", encoding="latin-1")
+
+        content = file_to_read.readlines()
+
+        # Close file after reading
+        file_to_read.close()
+
+        return ConcreteContent(content)
 
 
 class ConcreteContent(Content):
@@ -44,22 +58,8 @@ class ConcreteContent(Content):
         return entity_group
 
 
-class ConcreteFileReader(FileReader):
-
-    def __init__(self, file: str) -> None:
-        # todo add exception handler
-        super().__init__(file)
-
-    def parse_file_content(self) -> Content:
-        # Set file with test data to read, r means read
-        file_to_read = open(self._file, "r", encoding="latin-1")
-
-        content = file_to_read.readlines()
-
-        # Close file after reading
-        file_to_read.close()
-
-        return ConcreteContent(content)
+class ConcreteEntity(Entity):
+    pass
 
 
 """
@@ -161,9 +161,8 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
         # todo
         pass
 
-    def get_entities_group_without_division(self) -> EntityGroup:
+    def get_entities_group_without_division(self, entities: List[Entity]) -> EntityGroup:
         # All entities from content
-        entities = self._entities
 
         entity_group = EntityGroupNoDivision()
 

@@ -5,6 +5,40 @@ from enum import Enum
 from typing import List
 
 
+class FileReader(ABC):
+    """
+    Reads file content from file string
+    """
+
+    @abstractmethod
+    def __init__(self, file: str) -> None:
+        """
+        Create file reader ready to read files
+        :param file: file to read
+        """
+
+        self._file = file
+
+    @abstractmethod
+    def parse_file_content(self) -> Content:
+        pass
+
+
+class Content(ABC):
+
+    @abstractmethod
+    def __init__(self, content: List[str]) -> None:
+        self._content = content
+
+    # @abstractmethod
+    # def get_entities_from_content(self) -> List[Entity]:
+    #     pass
+
+    @abstractmethod
+    def get_entity_group_from_content(self) -> EntityGroup:
+        pass
+
+
 # Enumeration of entity properties
 class EntityProperty(Enum):
     VOLTAGE = {'name': 'voltage', 'units': 'V'}
@@ -72,42 +106,8 @@ class Entity(ABC):
             pass
 
 
-class Content(ABC):
-
-    @abstractmethod
-    def __init__(self, content: List[str]) -> None:
-        self._content = content
-
-    # @abstractmethod
-    # def get_entities_from_content(self) -> List[Entity]:
-    #     pass
-
-    @abstractmethod
-    def get_entity_group_from_content(self) -> EntityGroup:
-        pass
-
-
-class FileReader(ABC):
-    """
-    Reads file content from file string
-    """
-
-    @abstractmethod
-    def __init__(self, file: str) -> None:
-        """
-        Create file reader ready to read files
-        :param file: file to read
-        """
-
-        self._file = file
-
-    @abstractmethod
-    def parse_file_content(self) -> Content:
-        pass
-
-
 """
-Entities are represented by composite patter
+Entity groups are represented by composite patter
 to allow sub division
 """
 
@@ -137,9 +137,6 @@ class EntityGroup(ABC):
         self._children: List[EntityGroup] = []
         self._has_children: bool = False
 
-    """
-    NEW
-    """
 
     @property
     def has_parent(self) -> bool:
@@ -167,10 +164,6 @@ class EntityGroup(ABC):
     def children(self, children: List[EntityGroup]):
         self._has_children = True
         self._children = children
-
-    """
-    OLD
-    """
 
     @property
     def entities(self) -> List[Entity]:
@@ -210,11 +203,6 @@ class EntityGroup(ABC):
 
         return properties_list
 
-    """
-    DEPRECATED
-    """
-
-    # nothing is deprecated
 
 
 """
@@ -266,7 +254,7 @@ class EntityGroupCreator(ABC):
         pass
 
     @abstractmethod
-    def get_entities_group_without_division(self, entity_group: EntityGroup) -> EntityGroup:
+    def get_entities_group_without_division(self, entities: List[Entity]) -> EntityGroup:
         pass
 
 
