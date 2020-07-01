@@ -40,8 +40,17 @@ if __name__ == '__main__':
     group_by_slope = entity_group_creator.divide_entities_by_slope(child_group, EntityProperty.SLOPE_UP)
 
 
-    print(len(group_by_slope.entities))
+    print(f"How many sloper are {len(group_by_slope.children)}")
 
+    plotter: EntityGroupPlotter = ConcreteEntityGroupPlotter()
+    #
+    # plotter.add_entity_group(group_by_slope.children[10])
+    # plotter.add_entity_group(group_by_slope.children[20])
+    # plotter.add_entity_group(group_by_slope.children[30])
+
+    plotter.add_entity_groups(group_by_slope.children)
+
+    plotter.plot_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
 """    
 
