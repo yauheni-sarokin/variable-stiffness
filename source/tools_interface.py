@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
+import Colors
+
 
 class FileReader(ABC):
     """
@@ -41,16 +43,17 @@ class Content(ABC):
 
 # Enumeration of entity properties
 class EntityProperty(Enum):
-    VOLTAGE = {'name': 'voltage', 'units': 'V'}
-    CURRENT = {'name': 'current', 'units': 'mA/uA'}
-    FORCE = {'name': 'force', 'units': 'uN'}
-    DISPLACEMENT = {'name': 'displacement', 'units': 'mm'}
-    TIME = {'name': 'time', 'units': 'ms'}
-    CYCLE = {'name': 'cycle', 'units': 'cycles'}
-    NO_GROUP = {'name': 'no group', 'units': 'no units'}
+    VOLTAGE = {'name': 'voltage', 'units': 'V', 'has_value': True}
+    CURRENT = {'name': 'current', 'units': 'mA/uA', 'has_value': True}
+    FORCE = {'name': 'force', 'units': 'uN', 'has_value': True}
+    DISPLACEMENT = {'name': 'displacement', 'units': 'mm', 'has_value': True}
+    TIME = {'name': 'time', 'units': 'ms', 'has_value': True}
+    CYCLE = {'name': 'cycle', 'units': 'cycles', 'has_value': True}
 
-    SLOPE_UP = {'name': 'slope up', 'units': 'no units'}
-    SLOPE_DOWN = {'name': 'slope down', 'units': 'no units'}
+    NO_GROUP = {'name': 'no group', 'units': 'no units', 'has_value': False}
+
+    SLOPE_UP = {'name': 'slope up', 'units': 'no units', 'has_value': False}
+    SLOPE_DOWN = {'name': 'slope down', 'units': 'no units', 'has_value': False}
 
 
 class Entity(ABC):
@@ -122,7 +125,9 @@ class EntityGroup(ABC):
     def __init__(self,
                  entity_property: EntityProperty,
                  property_value: float = None,
-                 parent: EntityGroup = None) -> None:
+                 parent: EntityGroup = None,
+                 children: List[EntityGroup] = None) -> None:
+
         self._entity_property = entity_property
         self._property_value = property_value
         # all entities in the group
@@ -132,10 +137,25 @@ class EntityGroup(ABC):
         if parent is not None:
             self._parent: EntityGroup = parent
             # self._has_parent = True
-        self._has_parent: bool = parent is None
+        self._has_parent: bool = parent is not None
 
-        self._children: List[EntityGroup] = []
-        self._has_children: bool = False
+        if children is not None:
+            self._children: List[EntityGroup] = children
+            self._has_children: bool = True
+        else:
+            self._children: List[EntityGroup] = []
+            self._has_children: bool = False
+
+        # default blue line
+        self._color_line: Colors.RGBColor = Colors.RGBColor([0, 128, 255])
+
+    @property
+    def color_line(self):
+        return self._color_line
+
+    @color_line.setter
+    def color_line(self, value: Colors.RGBColor):
+        self._color_line = value
 
     @property
     def has_parent(self) -> bool:
@@ -286,3 +306,38 @@ class EntityGroupPlotter(ABC):
                     x_axis_property: EntityProperty,
                     y_axis_property: EntityProperty) -> None:
         pass
+
+
+"""
+Entity group decorator
+To change children's property
+"""
+
+
+class EntityGroupDecorator(EntityGroup):
+
+    def __init__(self, entity_group: EntityGroup) -> None:
+
+        # entity property
+        group_entity_property = entity_group.entity_property
+
+        # property value
+        group_property_value = None
+        if entity_group.entity_property.value['has_value']:
+            group_property_value = entity_group.property_value
+
+        # parent
+        group_property_parent = None
+        if entity_group.has_parent:
+            group_property_parent = entity_group.parent
+
+        # children
+        group_property_children = None
+        if entity_group.has_parent:
+            group_property_children = entity_group.children
+
+        # initialize
+        super().__init__(group_entity_property,
+                         group_property_value,
+                         group_property_parent,
+                         group_property_children)

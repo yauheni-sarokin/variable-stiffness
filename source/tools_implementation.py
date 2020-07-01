@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 
-import Colors
 from tools_interface import *
 
 
@@ -283,17 +282,15 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
         entity_groups = self._entity_groups
 
-        # get color hex's
-        color_gradient = Colors.get_color_gradient_array(
-            len(entity_groups), Colors.ColorGradients.TIMBER)
-
         fig, ax = plt.subplots()
 
-        for entity_group, color in zip(entity_groups, color_gradient):
+        for entity_group in entity_groups:
             # get x, y array
             x = entity_group.get_array_of_properties(x_axis_property)
             y = entity_group.get_array_of_properties(y_axis_property)
-            ax.plot(x, y, color=color)
+            hex_color = entity_group.color_line.to_hex().hex
+
+            ax.plot(x, y, color=hex_color)
 
         x_units = x_axis_property.value['units']
         x_name = x_axis_property.value['name']
@@ -304,3 +301,19 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         ax.set(xlabel=x_units, ylabel=y_units, title=title)
 
         plt.show()
+
+
+class ColorEntityGroupDecorator(EntityGroupDecorator):
+
+    def __init__(self, entity_group: EntityGroup,
+                 color_gradient: Colors.ColorGradients) -> None:
+        # print(f"has children ??? {entity_group.has_children}")
+        super().__init__(entity_group)
+        self._color_gradient = color_gradient
+
+        children = entity_group.children
+        colors = Colors.get_color_gradient_array(len(children), self._color_gradient)
+
+        for child, color in zip(children, colors):
+            hex_color = child.color_line.to_hex().hex
+            child.color_line = hex_color

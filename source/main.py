@@ -47,10 +47,21 @@ if __name__ == '__main__':
     # plotter.add_entity_group(group_by_slope.children[20])
     # plotter.add_entity_group(group_by_slope.children[30])
 
-    plotter.add_entity_groups(group_by_slope.children)
+    # apply decorator
+
+    # group_from_content = ColorEntityGroupDecorator(group_from_content, Colors.ColorGradients.REA)
+
+    print(f'has children : {group_from_content.has_children}\n'
+          f'has parent : {group_from_content.has_parent}\n'
+          f'has entities {len(group_from_content.entities)}')
+
+
+
+    plotter.add_entity_groups(group_from_content.children)
+    # plotter.add_entity_groups(group_by_slope.children)
 
     # plotter.plot_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-    plotter.plot_groups(EntityProperty.TIME, EntityProperty.VOLTAGE)
+    plotter.plot_groups(EntityProperty.TIME, EntityProperty.CURRENT)
 
 """    
 

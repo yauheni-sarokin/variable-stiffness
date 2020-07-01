@@ -127,3 +127,4 @@ def get_color_gradient_array(n:int,
     gradient = linear_gradient(start_, end_, n)
 
     return gradient['hex']
+
