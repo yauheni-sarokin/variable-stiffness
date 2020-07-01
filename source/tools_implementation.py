@@ -10,11 +10,14 @@ class ConcreteEntity(Entity):
 class ConcreteContent(Content):
 
     def __init__(self, content: List[str]) -> None:
+        # remove header, does not carry any information
         content.remove(content[0])
         super().__init__(content)
 
-    def get_entities_from_content(self) -> List[Entity]:
-        entities_list: List[Entity] = []
+    def get_entity_group_from_content(self) -> EntityGroup:
+        # entities_list: List[Entity] = []
+
+        entity_group = EntityGroupNoDivision()
 
         for line in self._content:
             # line is a string that contains data, so string have to be divided
@@ -34,9 +37,11 @@ class ConcreteContent(Content):
 
             entity = ConcreteEntity(voltage, current, force, displacement, time, cycle)
 
-            entities_list.append(entity)
+            # entities_list.append(entity)
 
-        return entities_list
+            entity_group.append(entity)
+
+        return entity_group
 
 
 class ConcreteFileReader(FileReader):
@@ -85,6 +90,10 @@ class EntityGroupByCurrent(EntityGroup):
 
 
 class EntityGroupNoDivision(EntityGroup):
+    """
+    Creates EntityGroup without property and
+    parent, used it for creating group from content
+    """
 
     def __init__(self) -> None:
         super().__init__(EntityProperty.NO_GROUP)
@@ -92,9 +101,9 @@ class EntityGroupNoDivision(EntityGroup):
 
 class EntityGroupBySlope(EntityGroup):
 
-    def __init__(self, entity_property: EntityProperty, property_value: float) -> None:
+    def __init__(self, entity_property: EntityProperty) -> None:
         super().__init__(entity_property)
-        self._property_value = property_value
+
         self._slope_up_list: List[Entity] = []
         self._slope_down_list: List[Entity] = []
 
@@ -119,9 +128,11 @@ class EntityGroupBySlope(EntityGroup):
 
 class ConcreteEntityGroupCreator(EntityGroupCreator):
 
-    def divide_entities_by_voltage(self, voltage_round=1) -> List[EntityGroup]:
+    def divide_entities_by_voltage(self,
+                                   entity_group: EntityGroup,
+                                   voltage_round=1) -> EntityGroup:
         # All entities from content
-        entities = self._entities
+        entities = entity_group.entities
 
         # iterator mechanism
 
@@ -142,9 +153,11 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                 entities_group_list.append(current_entities_group)
                 current_entities_group.append(entity)
 
-        return entities_group_list
+        entity_group.children = entities_group_list
 
-    def divide_entities_by_current(self) -> List[EntityGroup]:
+        return entity_group
+
+    def divide_entities_by_current(self, entity_group: EntityGroup) -> EntityGroup:
         # todo
         pass
 
@@ -160,11 +173,10 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
         return entity_group
 
     def divide_entities_by_slope(self,
-                                 entity_property: EntityProperty,
-                                 property_value: float,
-                                 slope: EntityGroupSlope = EntityGroupSlope.SLOPE_UP) \
-            -> List[EntityGroup]:
-        entities = self._entities
+                                 entity_group: EntityGroup,
+                                 entity_property: EntityProperty = EntityProperty.SLOPE_UP) \
+            -> EntityGroup:
+        entities = entity_group.entities
 
         # Following code from initial program, rewrite in case
         # of bugs
@@ -177,7 +189,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
         # stores true in case of loading (increasing displacement)
         slope_up = True
 
-        current_entity_group = EntityGroupBySlope(entity_property, property_value)
+        current_entity_group = EntityGroupBySlope(entity_property)
 
         for entity in entities:
             # if displacement is higher than the previous one and slope is up
@@ -187,7 +199,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                 previous_displacement = entity.displacement
                 current_entity_group.append_slope_up(entity)
 
-                if slope == EntityGroupSlope.SLOPE_UP:
+                if entity_property == EntityProperty.SLOPE_UP:
                     current_entity_group.append(entity)
 
             # if displacement is higher than the previous but the slope is down
@@ -198,10 +210,10 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                 slope_up = True
                 entities_list.append(current_entity_group)
 
-                current_entity_group = EntityGroupBySlope(entity_property, property_value)
+                current_entity_group = EntityGroupBySlope(entity_property)
                 current_entity_group.append_slope_up(entity)
 
-                if slope == EntityGroupSlope.SLOPE_UP:
+                if entity_property == EntityProperty.SLOPE_UP:
                     current_entity_group.append(entity)
 
             # if displacement is lower than the previous one and the slope is
@@ -212,7 +224,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
 
                 current_entity_group.append_slope_down(entity)
 
-                if slope == EntityGroupSlope.SLOPE_DOWN:
+                if entity_property == EntityProperty.SLOPE_DOWN:
                     current_entity_group.append(entity)
 
             # if displacement is lower than the previous one and the slope is
@@ -222,10 +234,12 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
 
                 current_entity_group.append_slope_down(entity)
 
-                if slope == EntityGroupSlope.SLOPE_DOWN:
+                if entity_property == EntityProperty.SLOPE_DOWN:
                     current_entity_group.append(entity)
 
-        return entities_list
+        entity_group.children = entities_list
+
+        return entity_group
 
 
 class ConcreteEntityGroupPlotter(EntityGroupPlotter):
@@ -268,8 +282,6 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         """
 
         entity_groups = self._entity_groups
-
-
 
         fig, ax = plt.subplots()
 

@@ -9,11 +9,42 @@ if __name__ == '__main__':
 
     content = file_reader.parse_file_content()
 
-    entities_from_content = content.get_entities_from_content()
+    group_from_content = content.get_entity_group_from_content()
 
-    print(f"Total amount of entities : {len(entities_from_content)}")
+    print(f"Total amount of entities : {len(group_from_content.entities)}")
 
-    entity_group_creator = ConcreteEntityGroupCreator(entities_from_content)
+    entity_group_creator = ConcreteEntityGroupCreator()
+
+    group_from_content = entity_group_creator.divide_entities_by_voltage(group_from_content)
+
+    print(f"Divide this group by voltages \n"
+          f"Now this group has children : {group_from_content.has_children} \n"
+          f"And how many : {len(group_from_content.children)} \n")
+
+    content_children = group_from_content.children
+
+    for child in content_children:
+        print(f"{child.entity_property.value['name']} {child.property_value} "
+              f"{len(child.entities)} has parent : {child.has_parent}"
+              f" has children : {child.has_children}")
+
+    to_take_group = 2
+
+
+    print(f" Take child group number {to_take_group} with "
+          f"{len(group_from_content.children[to_take_group].entities)}\n"
+          f" and voltage {group_from_content.children[to_take_group].property_value}")
+
+    child_group = group_from_content.children[to_take_group]
+
+    group_by_slope = entity_group_creator.divide_entities_by_slope(child_group, EntityProperty.SLOPE_UP)
+
+
+    print(len(group_by_slope.entities))
+
+
+"""    
+
 
     entities_by_voltage = entity_group_creator.divide_entities_by_voltage()
 
@@ -37,3 +68,4 @@ if __name__ == '__main__':
     plotter.add_entity_groups(entities_by_slope)
 
     plotter.plot_groups(EntityProperty.TIME, EntityProperty.CURRENT)
+"""

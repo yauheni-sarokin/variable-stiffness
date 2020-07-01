@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
@@ -12,6 +14,9 @@ class EntityProperty(Enum):
     TIME = {'name': 'time', 'units': 'ms'}
     CYCLE = {'name': 'cycle', 'units': 'cycles'}
     NO_GROUP = {'name': 'no group', 'units': 'no units'}
+
+    SLOPE_UP = {'name': 'slope up', 'units': 'no units'}
+    SLOPE_DOWN = {'name': 'slope down', 'units': 'no units'}
 
 
 class Entity(ABC):
@@ -73,8 +78,12 @@ class Content(ABC):
     def __init__(self, content: List[str]) -> None:
         self._content = content
 
+    # @abstractmethod
+    # def get_entities_from_content(self) -> List[Entity]:
+    #     pass
+
     @abstractmethod
-    def get_entities_from_content(self) -> List[Entity]:
+    def get_entity_group_from_content(self) -> EntityGroup:
         pass
 
 
@@ -97,6 +106,12 @@ class FileReader(ABC):
         pass
 
 
+"""
+Entities are represented by composite patter
+to allow sub division
+"""
+
+
 class EntityGroup(ABC):
     """
     Entities can be divided into many groups,
@@ -104,16 +119,73 @@ class EntityGroup(ABC):
     entities
     """
 
-    def __init__(self, entity_property: EntityProperty, property_value: float = None) -> None:
+    def __init__(self,
+                 entity_property: EntityProperty,
+                 property_value: float = None,
+                 parent: EntityGroup = None) -> None:
         self._entity_property = entity_property
         self._property_value = property_value
+        # all entities in the group
         self._list = []
+
+        # #todo new update, if works, delete later
+        if parent is not None:
+            self._parent: EntityGroup = parent
+            # self._has_parent = True
+        self._has_parent: bool = parent is None
+
+        self._children: List[EntityGroup] = []
+        self._has_children: bool = False
+
+    """
+    NEW
+    """
+
+    @property
+    def has_parent(self) -> bool:
+        return self._has_parent
+
+    @property
+    def parent(self) -> EntityGroup:
+        if self._has_parent:
+            return self._parent
+        else:
+            raise NameError('No parent in EntityGroup')
+
+    @property
+    def has_children(self) -> bool:
+        return self._has_children
+
+    @property
+    def children(self) -> List[EntityGroup]:
+        if self._has_children:
+            return self._children
+        else:
+            raise NameError('No children in EntityGroup')
+
+    @children.setter
+    def children(self, children: List[EntityGroup]):
+        self._has_children = True
+        self._children = children
+
+    """
+    OLD
+    """
 
     @property
     def entities(self) -> List[Entity]:
+        """
+        Return all entities in the group, not from children
+        :return:
+        """
         return self._list
 
     def append(self, entity: Entity) -> None:
+        """
+        Append entity one by one to the group
+        :param entity:
+        :return:
+        """
         self._list.append(entity)
 
     @property
@@ -129,7 +201,7 @@ class EntityGroup(ABC):
         return self._property_value
 
     def get_array_of_properties(self, entity_property: EntityProperty) -> List[float]:
-        # create list with all possible properties
+        # create list with all possible properties for building graphs
         properties_list = []
 
         for entity in self.entities:
@@ -138,15 +210,16 @@ class EntityGroup(ABC):
 
         return properties_list
 
+    """
+    DEPRECATED
+    """
+
+    # nothing is deprecated
+
 
 """
 Abstract factory pattern
 """
-
-
-class EntityGroupSlope(Enum):
-    SLOPE_UP = {'name': 'slope up'}
-    SLOPE_DOWN = {'name': 'slope down'}
 
 
 class EntityGroupCreator(ABC):
@@ -155,32 +228,45 @@ class EntityGroupCreator(ABC):
     and return EntityGroup divided by properties
     """
 
-    def __init__(self, entities: List[Entity]) -> None:
-        self._entities = entities
+    """
+    DEPRECATED
+    """
+
+    # def __init__(self, entities: List[Entity]) -> None:
+    #     self._entities = entities
 
     @abstractmethod
-    def divide_entities_by_voltage(self, voltage_round=1) -> List[EntityGroup]:
-        """
-        Entities are divided into voltage groups
-        :param voltage_round: How many float signs to round
-        :return:
-        """
-        pass
-
-    @abstractmethod
-    def divide_entities_by_current(self) -> List[EntityGroup]:
-        pass
-
-    @abstractmethod
-    def get_entities_group_without_division(self) -> EntityGroup:
+    def divide_entities_by_current(self, entity_group: EntityGroup) -> EntityGroup:
         pass
 
     @abstractmethod
     def divide_entities_by_slope(self,
-                                 entity_property: EntityProperty,
-                                 property_value: float,
-                                 slope: EntityGroupSlope = EntityGroupSlope.SLOPE_UP) \
+                                 entity_group: EntityGroup,
+                                 entity_property: EntityProperty) \
             -> List[EntityGroup]:
+        pass
+
+    """
+    NEW
+    """
+
+    def __init__(self) -> None:
+        pass
+
+    @abstractmethod
+    def divide_entities_by_voltage(self,
+                                   entity_group: EntityGroup,
+                                   voltage_round=1) -> EntityGroup:
+        """
+        Entities are divided into voltage groups
+        :param entity_group:
+        :param voltage_round: How many float signs to round
+        :return: the same entity group with children
+        """
+        pass
+
+    @abstractmethod
+    def get_entities_group_without_division(self, entity_group: EntityGroup) -> EntityGroup:
         pass
 
 
