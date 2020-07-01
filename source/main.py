@@ -30,15 +30,14 @@ if __name__ == '__main__':
 
     to_take_group = 2
 
-
     print(f" Take child group number {to_take_group} with "
           f"{len(group_from_content.children[to_take_group].entities)}\n"
           f" and voltage {group_from_content.children[to_take_group].property_value}")
 
     child_group = group_from_content.children[to_take_group]
 
-    group_by_slope = entity_group_creator.divide_entities_by_slope(child_group, EntityProperty.SLOPE_UP)
-
+    group_by_slope = entity_group_creator.divide_entities_by_slope(child_group,
+                                                                   EntityProperty.SLOPE_UP)
 
     print(f"How many sloper are {len(group_by_slope.children)}")
 

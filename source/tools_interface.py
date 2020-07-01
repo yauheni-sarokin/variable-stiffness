@@ -137,7 +137,6 @@ class EntityGroup(ABC):
         self._children: List[EntityGroup] = []
         self._has_children: bool = False
 
-
     @property
     def has_parent(self) -> bool:
         return self._has_parent
@@ -202,7 +201,6 @@ class EntityGroup(ABC):
             properties_list.append(get_property)
 
         return properties_list
-
 
 
 """
