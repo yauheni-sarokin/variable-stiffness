@@ -131,7 +131,7 @@ class EntityGroup(ABC):
         self._entity_property = entity_property
         self._property_value = property_value
         # all entities in the group
-        self._list = []
+        self._entities = []
 
         # #todo new update, if works, delete later
         if parent is not None:
@@ -168,6 +168,11 @@ class EntityGroup(ABC):
         else:
             raise NameError('No parent in EntityGroup')
 
+    @parent.setter
+    def parent(self, parent: EntityGroup):
+        self._has_parent = True
+        self._parent = parent
+
     @property
     def has_children(self) -> bool:
         return self._has_children
@@ -190,7 +195,7 @@ class EntityGroup(ABC):
         Return all entities in the group, not from children
         :return:
         """
-        return self._list
+        return self._entities
 
     def append(self, entity: Entity) -> None:
         """
@@ -198,7 +203,7 @@ class EntityGroup(ABC):
         :param entity:
         :return:
         """
-        self._list.append(entity)
+        self._entities.append(entity)
 
     @property
     def entity_property(self):
@@ -221,6 +226,17 @@ class EntityGroup(ABC):
             properties_list.append(get_property)
 
         return properties_list
+
+    def __str__(self) -> str:
+        children_amount: int = len(self.children) if self._has_children else 0
+
+        string = f'============================================================\n' \
+                 f'has children: {self._has_children} amount: {children_amount} \n' \
+                 f'has parent: {self.has_parent} \n' \
+                 f'amount of entities : {len(self._entities)} \n' \
+                 f'entity property : {self._entity_property} and value : {self._property_value}\n' \
+                 f'============================================================\n'
+        return string
 
 
 """

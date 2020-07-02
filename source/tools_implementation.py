@@ -139,6 +139,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
         current_v = round(entities[0].voltage, voltage_round)
 
         current_entities_group = EntityGroupByVoltage(current_v)
+        current_entities_group.parent = entity_group
         entities_group_list = [current_entities_group]
 
         # iterate all entities
@@ -150,6 +151,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
             else:
                 current_v = voltage_rounded
                 current_entities_group = EntityGroupByVoltage(current_v)
+                current_entities_group.parent = entity_group
                 entities_group_list.append(current_entities_group)
                 current_entities_group.append(entity)
 
@@ -175,6 +177,12 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                                  entity_group: EntityGroup,
                                  entity_property: EntityProperty = EntityProperty.SLOPE_UP) \
             -> EntityGroup:
+        """
+        Returns the same group but with added children
+        :param entity_group:
+        :param entity_property:
+        :return:
+        """
         entities = entity_group.entities
 
         # Following code from initial program, rewrite in case
@@ -288,9 +296,10 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
             # get x, y array
             x = entity_group.get_array_of_properties(x_axis_property)
             y = entity_group.get_array_of_properties(y_axis_property)
-            hex_color = entity_group.color_line.to_hex().hex
-
-            ax.plot(x, y, color=hex_color)
+            # hex_color = entity_group.color_line.to_hex().hex
+            color_line = entity_group.color_line
+            # ax.plot(x, y, color=hex_color)
+            ax.plot(x, y, color=color_line)
 
         x_units = x_axis_property.value['units']
         x_name = x_axis_property.value['name']
@@ -303,18 +312,15 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         plt.show()
 
 
-
 class ColorEntityGroupDecorator(EntityGroupDecorator):
 
     def __init__(self, entity_group: EntityGroup,
                  color_gradient: Colors.ColorGradients) -> None:
-        # print(f"has children ??? {entity_group.has_children}")
         super().__init__(entity_group)
-        self._color_gradient = color_gradient
 
-        children = entity_group.children
-        colors = Colors.get_color_gradient_array(len(children), self._color_gradient)
+        children = self.children
+
+        colors = Colors.get_color_gradient_array(len(children), color_gradient)
 
         for child, color in zip(children, colors):
-            hex_color = child.color_line.to_hex().hex
-            child.color_line = hex_color
+            child.color_line = color
