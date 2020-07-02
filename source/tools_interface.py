@@ -357,3 +357,17 @@ class EntityGroupDecorator(EntityGroup):
                          group_property_value,
                          group_property_parent,
                          group_property_children)
+
+"""
+This class implements FINAL operations with
+entity group:
+1. All children groups (for example groups by slope)
+are averaged to obtain entity group with no children,
+but averaged entities entities 
+"""
+class FinalEntityGroupHandler(ABC):
+
+    @abstractmethod
+    def average_entities(self, entity_group: EntityGroup) -> EntityGroup:
+        """Take group with children and return one group without"""
+        pass

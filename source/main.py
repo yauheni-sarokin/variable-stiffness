@@ -16,12 +16,11 @@ if __name__ == '__main__':
 
     content_children = group_from_content.children
 
-    #take one entity from the list
+    # take one entity from the list
     to_take = 3
     child_to_take = content_children[to_take]
 
     print(child_to_take)
-
 
     entity_group_by_slope = entity_group_creator.divide_entities_by_slope(child_to_take)
 
@@ -33,16 +32,20 @@ if __name__ == '__main__':
 
     # plotter.add_entity_group(entity_group_by_slope.children[11])
 
-    # plotter.plot_group(entity_group_by_slope.children[12], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    # plotter.plot_group(entity_group_by_slope.children[12], EntityProperty.DISPLACEMENT,
+    # EntityProperty.FORCE)
 
-    color_decorated_group = ColorEntityGroupDecorator(entity_group_by_slope, Colors.ColorGradients.BY_DESIGN)
+    color_decorated_group = ColorEntityGroupDecorator(entity_group_by_slope,
+                                                      Colors.ColorGradients.BY_DESIGN)
 
-    cut_group_decorated = CutChildrenEntityGroupDecorator(color_decorated_group, start_cut=10, end_cut=10)
+    cut_group_decorated = CutChildrenEntityGroupDecorator(color_decorated_group, start_cut=0,
+                                                          end_cut=0)
 
     print(color_decorated_group)
 
-    # plotter.plot_group(decorated_group.children[100], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    # plotter.plot_group(decorated_group.children[100], EntityProperty.DISPLACEMENT,
+    # EntityProperty.FORCE)
 
     plotter.add_entity_groups(cut_group_decorated.children)
     # plotter.plot_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-    plotter.plot_groups(EntityProperty.TIME, EntityProperty.CURRENT)
+    plotter.plot_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)

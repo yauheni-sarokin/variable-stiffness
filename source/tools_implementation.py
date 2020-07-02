@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 
 from tools_interface import *
 
+import Colors
+
 
 class ConcreteFileReader(FileReader):
 
@@ -312,6 +314,12 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         plt.show()
 
 
+"""
+Entity group decorator
+To change children's property
+"""
+
+
 class ColorEntityGroupDecorator(EntityGroupDecorator):
 
     def __init__(self, entity_group: EntityGroup,
@@ -332,7 +340,7 @@ class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
     in the end of the list
     """
 
-    #todo does not return a COPY but all the objects are the same instances
+    # todo does not return a COPY but all the objects are the same instances
 
     def __init__(self, entity_group: EntityGroup,
                  start_cut: int = 0,
@@ -350,3 +358,12 @@ class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
                 del children[-1]
 
         self.children = children
+
+
+class ConcreteFinalEntityGroupHandler(FinalEntityGroupHandler):
+
+    @abstractmethod
+    def average_entities(self, entity_group: EntityGroup) -> EntityGroup:
+        children = entity_group.children
+        # todo here stoppped
+        pass
