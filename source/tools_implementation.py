@@ -324,3 +324,29 @@ class ColorEntityGroupDecorator(EntityGroupDecorator):
 
         for child, color in zip(children, colors):
             child.color_line = color
+
+
+class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
+    """
+    Decorator removes some children in the beginning and
+    in the end of the list
+    """
+
+    #todo does not return a COPY but all the objects are the same instances
+
+    def __init__(self, entity_group: EntityGroup,
+                 start_cut: int = 0,
+                 end_cut: int = 0) -> None:
+        super().__init__(entity_group)
+
+        children = self.children
+
+        if start_cut > 0:
+            for i in range(start_cut):
+                del children[0]
+
+        if end_cut > 0:
+            for i in range(end_cut):
+                del children[-1]
+
+        self.children = children
