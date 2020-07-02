@@ -303,6 +303,7 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         plt.show()
 
 
+
 class ColorEntityGroupDecorator(EntityGroupDecorator):
 
     def __init__(self, entity_group: EntityGroup,
