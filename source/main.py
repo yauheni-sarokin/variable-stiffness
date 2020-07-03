@@ -2,7 +2,7 @@ from tools_implementation import *
 from math_tool import *
 
 if __name__ == '__main__':
-    file = "../testdata/from_-2V_to_2V_400mV_1mA.txt"
+    file = "../testdata/0v_to_2V_250mV_1mA_1_30min_step_plain_side.txt"
     file_reader = ConcreteFileReader(file)
     content = file_reader.parse_file_content()
     group_from_content = content.get_entity_group_from_content()
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     #     print(content_child)
 
     # take one entity from the list
-    to_take = 14
+    to_take = 4
     child_to_take = content_children[to_take]
 
     # print(child_to_take)
@@ -45,10 +45,13 @@ if __name__ == '__main__':
 
     # plotter.plot_group(decorated_group.children[20], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
-    decorated_group = CutChildrenEntityGroupDecorator(decorated_group, 80)
+    decorated_group = CutChildrenEntityGroupDecorator(decorated_group, 30)
 
     tool = MathTool()
-    averaging = tool.make_averaging(decorated_group.children, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    # averaging = tool.make_averaging(decorated_group.children, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
+
+    averaging = AveragingEntityGroupDecorator(decorated_group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     entities = averaging.entities
     # print()

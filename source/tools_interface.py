@@ -186,8 +186,12 @@ class EntityGroup(ABC):
 
     @children.setter
     def children(self, children: List[EntityGroup]):
-        self._has_children = True
-        self._children = children
+        if children is not None:
+            self._has_children = True
+            self._children = children
+        else:
+            self._has_children = False
+            self._children = None
 
     @property
     def entities(self) -> List[Entity]:
@@ -197,7 +201,22 @@ class EntityGroup(ABC):
         """
         return self._entities
 
-    def append(self, entity: Entity) -> None:
+    @entities.setter
+    def entities(self, entities_list: List[Entity]):
+        """
+        Set entities, not append
+        :param entities_list:
+        :return:
+        """
+        if entities_list is not None \
+                and isinstance(entities_list, List) \
+                and len(entities_list) > 0 \
+                and isinstance(entities_list[0], Entity):
+            self._entities = entities_list
+        else:
+            self._entities = []
+
+    def append_entity(self, entity: Entity) -> None:
         """
         Append entity one by one to the group
         :param entity:
@@ -358,19 +377,19 @@ class EntityGroupDecorator(EntityGroup):
                          group_property_parent,
                          group_property_children)
 
+#
+# """
+# This class implements FINAL operations with
+# entity group:
+# 1. All children groups (for example groups by slope)
+# are averaged to obtain entity group with no children,
+# but averaged entities entities
+# """
 
-"""
-This class implements FINAL operations with
-entity group:
-1. All children groups (for example groups by slope)
-are averaged to obtain entity group with no children,
-but averaged entities entities 
-"""
 
-
-class FinalEntityGroupHandler(ABC):
-
-    @abstractmethod
-    def average_entities(self, entity_group: EntityGroup) -> EntityGroup:
-        """Take group with children and return one group without"""
-        pass
+# class FinalEntityGroupHandler(ABC):
+#
+#     @abstractmethod
+#     def average_entities(self, entity_group: EntityGroup) -> EntityGroup:
+#         """Take group with children and return one group without"""
+#         pass

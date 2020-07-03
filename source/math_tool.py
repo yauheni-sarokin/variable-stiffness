@@ -4,10 +4,6 @@ from tools_interface import Entity, EntityGroup, EntityProperty
 import numpy as np
 
 
-class Example():
-    pass
-
-
 class MathTool:
 
     def make_averaging(self,
@@ -104,7 +100,7 @@ class MathTool:
         for x, y in zip(x_set_new, y_set_new):
             entity = Entity(0., 0., y, x, 0., 0.)
             # entities_list.append(entity)
-            entity_group.append(entity)
+            entity_group.append_entity(entity)
 
         return entity_group
 

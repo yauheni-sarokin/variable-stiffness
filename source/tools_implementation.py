@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 
-from tools_interface import *
-
 import Colors
+from tools_interface import *
+from math_tool import *
 
 
 class ConcreteFileReader(FileReader):
@@ -55,7 +55,7 @@ class ConcreteContent(Content):
 
             # entities_list.append(entity)
 
-            entity_group.append(entity)
+            entity_group.append_entity(entity)
 
         return entity_group
 
@@ -149,13 +149,13 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
             voltage = entity.voltage
             voltage_rounded = round(voltage, voltage_round)
             if current_v == voltage_rounded:
-                current_entities_group.append(entity)
+                current_entities_group.append_entity(entity)
             else:
                 current_v = voltage_rounded
                 current_entities_group = EntityGroupByVoltage(current_v)
                 current_entities_group.parent = entity_group
                 entities_group_list.append(current_entities_group)
-                current_entities_group.append(entity)
+                current_entities_group.append_entity(entity)
 
         entity_group.children = entities_group_list
 
@@ -171,7 +171,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
         entity_group = EntityGroupNoDivision()
 
         for entity in entities:
-            entity_group.append(entity)
+            entity_group.append_entity(entity)
 
         return entity_group
 
@@ -209,7 +209,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                 current_entity_group.append_slope_up(entity)
 
                 if entity_property == EntityProperty.SLOPE_UP:
-                    current_entity_group.append(entity)
+                    current_entity_group.append_entity(entity)
 
             # if displacement is higher than the previous but the slope is down
             # we start new cycle of loading after unloading
@@ -223,7 +223,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                 current_entity_group.append_slope_up(entity)
 
                 if entity_property == EntityProperty.SLOPE_UP:
-                    current_entity_group.append(entity)
+                    current_entity_group.append_entity(entity)
 
             # if displacement is lower than the previous one and the slope is
             # up then we are going we start unloading curve
@@ -234,7 +234,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                 current_entity_group.append_slope_down(entity)
 
                 if entity_property == EntityProperty.SLOPE_DOWN:
-                    current_entity_group.append(entity)
+                    current_entity_group.append_entity(entity)
 
             # if displacement is lower than the previous one and the slope is
             # down then the entities belong to the same group of loading curve
@@ -244,7 +244,7 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
                 current_entity_group.append_slope_down(entity)
 
                 if entity_property == EntityProperty.SLOPE_DOWN:
-                    current_entity_group.append(entity)
+                    current_entity_group.append_entity(entity)
 
         entity_group.children = entities_list
 
@@ -359,10 +359,21 @@ class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
         self.children = children
 
 
-class ConcreteFinalEntityGroupHandler(FinalEntityGroupHandler):
+class AveragingEntityGroupDecorator(EntityGroupDecorator):
+    """
+    Decorator converts entity group with many children into group
+    with one child but averaged
+    """
 
-    @abstractmethod
-    def average_entities(self, entity_group: EntityGroup) -> EntityGroup:
-        children = entity_group.children
-        # todo here stoppped
-        pass
+    def __init__(self,
+                 entity_group: EntityGroup,
+                 x_axis: EntityProperty,
+                 y_axis: EntityProperty) -> None:
+        super().__init__(entity_group)
+
+        tool = MathTool()
+        averaging = tool.make_averaging(entity_group.children, x_axis, y_axis)
+
+        averaging.children = None
+
+        self.entities = averaging.entities
