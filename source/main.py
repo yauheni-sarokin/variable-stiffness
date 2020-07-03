@@ -2,62 +2,34 @@ from tools_implementation import *
 from math_tool import *
 
 if __name__ == '__main__':
-    file = "../testdata/0v_to_2V_250mV_1mA_1_30min_step_plain_side.txt"
+    file = "../testdata/varstif9/0v_to_-2V_200mV_10mA_5min_step_plain_side.txt"
     file_reader = ConcreteFileReader(file)
     content = file_reader.parse_file_content()
     group_from_content = content.get_entity_group_from_content()
 
-    # print(group_from_content)
+    group_creator = ConcreteEntityGroupCreator()
+    group_plotter = ConcreteEntityGroupPlotter()
 
-    entity_group_creator = ConcreteEntityGroupCreator()
+    # group_plotter.plot_group(group_from_content, EntityProperty.TIME, EntityProperty.VOLTAGE)
 
-    group_from_content = entity_group_creator.divide_entities_by_voltage(group_from_content)
+    group = group_creator.divide_entities_by_voltage(group_from_content)
 
-    print(group_from_content)
+    group = ColorEntityGroupDecorator(group)
 
-    content_children = group_from_content.children
+    group = CutChildrenEntityGroupDecorator(group, end_cut=2, start_cut=1)
 
-    # for i, content_child in enumerate(content_children):
-    #     print(f"++++++++++++++++++++++++++++{i}")
-    #     print(content_child)
+    group = group.children[2]
 
-    # take one entity from the list
-    to_take = 4
-    child_to_take = content_children[to_take]
+    group = group_creator.divide_entities_by_slope(group)
 
-    # print(child_to_take)
+    group = CutChildrenEntityGroupDecorator(group, start_cut=50)
 
-    entity_group_by_slope = entity_group_creator.divide_entities_by_slope(child_to_take)
+    group = ColorEntityGroupDecorator(group)
 
-    # print(entity_group_by_slope)
+    group = AveragingEntityGroupDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
-    # print(entity_group_by_slope.children[11])
+    print(group)
 
-    plotter: EntityGroupPlotter = ConcreteEntityGroupPlotter()
+    group_plotter.plot_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
-    # plotter.add_entity_group(entity_group_by_slope.children[11])
-
-    # plotter.plot_group(entity_group_by_slope.children[12], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-
-    decorated_group = ColorEntityGroupDecorator(entity_group_by_slope, Colors.ColorGradients.BY_DESIGN)
-
-    # print(decorated_group)
-
-    # plotter.plot_group(decorated_group.children[20], EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-
-    decorated_group = CutChildrenEntityGroupDecorator(decorated_group, 30)
-
-    tool = MathTool()
-    # averaging = tool.make_averaging(decorated_group.children, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-
-
-    averaging = AveragingEntityGroupDecorator(decorated_group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-
-    entities = averaging.entities
-    # print()
-
-    plotter.add_entity_groups(decorated_group.children)
-    plotter.plot_groups(EntityProperty.TIME, EntityProperty.CURRENT)
-    plotter.plot_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-
-    plotter.plot_group(averaging, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    # group_plotter.plot_groups(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)

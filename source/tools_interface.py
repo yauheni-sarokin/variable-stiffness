@@ -147,14 +147,14 @@ class EntityGroup(ABC):
             self._has_children: bool = False
 
         # default blue line
-        self._color_line: Colors.RGBColor = Colors.RGBColor([0, 128, 255])
+        self._color_line:str = Colors.RGBColor([0, 128, 255]).to_hex().hex
 
     @property
-    def color_line(self):
+    def color_line(self) -> str:
         return self._color_line
 
     @color_line.setter
-    def color_line(self, value: Colors.RGBColor):
+    def color_line(self, value: str):
         self._color_line = value
 
     @property
@@ -337,7 +337,14 @@ class EntityGroupPlotter(ABC):
         pass
 
     @abstractmethod
+    def plot_added_groups(self,
+                          x_axis_property: EntityProperty,
+                          y_axis_property: EntityProperty) -> None:
+        pass
+
+    @abstractmethod
     def plot_groups(self,
+                    entity_group_with_children: EntityGroup,
                     x_axis_property: EntityProperty,
                     y_axis_property: EntityProperty) -> None:
         pass

@@ -280,8 +280,8 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
         plt.show()
 
-    def plot_groups(self, x_axis_property: EntityProperty,
-                    y_axis_property: EntityProperty) -> None:
+    def plot_added_groups(self, x_axis_property: EntityProperty,
+                          y_axis_property: EntityProperty) -> None:
         """
         Plot entity groups from the pool
         :param x_axis_property:
@@ -290,6 +290,32 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         """
 
         entity_groups = self._entity_groups
+
+        fig, ax = plt.subplots()
+
+        for entity_group in entity_groups:
+            # get x, y array
+            x = entity_group.get_array_of_properties(x_axis_property)
+            y = entity_group.get_array_of_properties(y_axis_property)
+            # hex_color = entity_group.color_line.to_hex().hex
+            color_line = entity_group.color_line
+            # ax.plot(x, y, color=hex_color)
+            ax.plot(x, y, color=color_line)
+
+        x_units = x_axis_property.value['units']
+        x_name = x_axis_property.value['name']
+        y_units = y_axis_property.value['units']
+        y_name = y_axis_property.value['name']
+        title = f"{y_name} - {x_name}"
+
+        ax.set(xlabel=x_units, ylabel=y_units, title=title)
+
+        plt.show()
+
+    def plot_groups(self, entity_group_with_children: EntityGroup, x_axis_property: EntityProperty,
+                    y_axis_property: EntityProperty) -> None:
+
+        entity_groups = entity_group_with_children.children
 
         fig, ax = plt.subplots()
 
@@ -322,8 +348,10 @@ To change children's property
 class ColorEntityGroupDecorator(EntityGroupDecorator):
 
     def __init__(self, entity_group: EntityGroup,
-                 color_gradient: Colors.ColorGradients) -> None:
+                 color_gradient: Colors.ColorGradients = Colors.ColorGradients.BY_DESIGN) -> None:
         super().__init__(entity_group)
+
+        self.children = entity_group.children
 
         children = self.children
 
@@ -346,7 +374,7 @@ class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
                  end_cut: int = 0) -> None:
         super().__init__(entity_group)
 
-        children = self.children
+        children = entity_group.children
 
         if start_cut > 0:
             for i in range(start_cut):
