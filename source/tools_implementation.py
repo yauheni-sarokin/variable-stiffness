@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 
-import Colors
-from tools_interface import *
 from math_tool import *
+from tools_interface import *
 
 
 class ConcreteFileReader(FileReader):
@@ -74,6 +73,7 @@ class EntityGroupByVoltage(EntityGroup):
     def __init__(self, voltage: float) -> None:
         super().__init__(EntityProperty.VOLTAGE, voltage)
         self._voltage = voltage
+
 
     @property
     def voltage(self) -> float:
@@ -349,9 +349,14 @@ class ColorEntityGroupDecorator(EntityGroupDecorator):
 
     def __init__(self, entity_group: EntityGroup,
                  color_gradient: Colors.ColorGradients = Colors.ColorGradients.BY_DESIGN) -> None:
-        super().__init__(entity_group)
 
-        self.children = entity_group.children
+        print(entity_group)
+        #todo не копируется из за не того типа
+        entity_group_copy = copy.copy(entity_group)
+
+        super().__init__(entity_group_copy)
+
+        self.children = entity_group_copy.children
 
         children = self.children
 

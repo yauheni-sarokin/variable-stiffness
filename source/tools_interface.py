@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
@@ -67,6 +68,22 @@ class Entity(ABC):
         self._displacement = displacement
         self._time = time
         self._cycle = cycle
+
+    def __copy__(self):
+        """
+        Create a shallow copy byy copy.copy
+        primitives dont have to be copied
+        :return:
+        """
+
+        new = self.__class__(self._voltage,
+                             self._current,
+                             self._force,
+                             self._displacement,
+                             self._time,
+                             self._cycle)
+
+        return new
 
     @property
     def voltage(self) -> float:
@@ -147,7 +164,45 @@ class EntityGroup(ABC):
             self._has_children: bool = False
 
         # default blue line
-        self._color_line:str = Colors.RGBColor([0, 128, 255]).to_hex().hex
+        self._color_line: str = Colors.RGBColor([0, 128, 255]).to_hex().hex
+
+    def __copy__(self):
+        """
+        shallow copy of the object
+
+        :return:
+        """
+        entity_property = self._entity_property
+        property_value = self._property_value
+
+        # entities have to be copied anyway
+        entities: List[Entity] = []
+
+        if len(self._entities) > 0:
+            for entity in self._entities:
+                copied_entity = copy.copy(entity)
+                entities.append(copied_entity)
+
+        # primitive
+        has_parent = self._has_parent
+        # not primitive, have to be the same parent
+        parent = None
+        if has_parent:
+            parent = self.parent
+
+        # primitive
+        has_children = self._has_children
+        # not primitive, but must be the same
+        children = None
+        if has_children:
+            children = self.children
+
+        # don't know if it is primitive
+        self._color_line = copy.copy(self._color_line)
+
+        new = self.__class__(entity_property)
+
+        return new
 
     @property
     def color_line(self) -> str:
