@@ -262,7 +262,6 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         :param y_axis_property:
         :return:
         """
-
         # get x, y array
         x = entity_group.get_array_of_properties(x_axis_property)
         y = entity_group.get_array_of_properties(y_axis_property)

@@ -358,6 +358,7 @@ class EntityGroupDecorator(EntityGroup):
                          group_property_parent,
                          group_property_children)
 
+
 """
 This class implements FINAL operations with
 entity group:
@@ -365,6 +366,8 @@ entity group:
 are averaged to obtain entity group with no children,
 but averaged entities entities 
 """
+
+
 class FinalEntityGroupHandler(ABC):
 
     @abstractmethod
