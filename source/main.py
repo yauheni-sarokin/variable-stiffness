@@ -10,26 +10,24 @@ if __name__ == '__main__':
     group_creator = ConcreteEntityGroupCreator()
     group_plotter = ConcreteEntityGroupPlotter()
 
-    # group_plotter.plot_group(group_from_content, EntityProperty.TIME, EntityProperty.VOLTAGE)
-
     group = group_creator.divide_entities_by_voltage(group_from_content)
 
-    group = ColorEntityGroupDecorator(group)
-
-    group = CutChildrenEntityGroupDecorator(group, end_cut=2, start_cut=1)
-
-    group = group.children[2]
+    # take 1 voltage group
+    voltage_group = 1
+    group = group.children[1]
 
     group = group_creator.divide_entities_by_slope(group)
 
-    group = CutChildrenEntityGroupDecorator(group, start_cut=50)
-
     group = ColorEntityGroupDecorator(group)
+
+    group_plotter.plot_children(group, EntityProperty.TIME, EntityProperty.CURRENT)
+
+    group = CutChildrenEntityGroupDecorator(group, end_cut=2, start_cut=20)
 
     group = AveragingEntityGroupDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
-    print(group)
+    group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
-    group_plotter.plot_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    import sys
 
-    # group_plotter.plot_groups(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    sys.exit(0)

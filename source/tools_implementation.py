@@ -74,7 +74,6 @@ class EntityGroupByVoltage(EntityGroup):
         super().__init__(EntityProperty.VOLTAGE, voltage)
         self._voltage = voltage
 
-
     @property
     def voltage(self) -> float:
         return self._voltage
@@ -253,8 +252,8 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
 
 class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
-    def plot_group(self, entity_group: EntityGroup,
-                   x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
+    def plot_entities_in_group(self, entity_group: EntityGroup,
+                               x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
         """
         Plot entity groups from the pool
         :param entity_group:
@@ -312,8 +311,8 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
         plt.show()
 
-    def plot_groups(self, entity_group_with_children: EntityGroup, x_axis_property: EntityProperty,
-                    y_axis_property: EntityProperty) -> None:
+    def plot_children(self, entity_group_with_children: EntityGroup, x_axis_property: EntityProperty,
+                      y_axis_property: EntityProperty) -> None:
 
         entity_groups = entity_group_with_children.children
 
@@ -347,16 +346,10 @@ To change children's property
 
 class ColorEntityGroupDecorator(EntityGroupDecorator):
 
-    def __init__(self, entity_group: EntityGroup,
+    def __init__(self,
+                 entity_group: EntityGroup,
                  color_gradient: Colors.ColorGradients = Colors.ColorGradients.BY_DESIGN) -> None:
-
-        print(entity_group)
-        #todo не копируется из за не того типа
-        entity_group_copy = copy.copy(entity_group)
-
-        super().__init__(entity_group_copy)
-
-        self.children = entity_group_copy.children
+        super().__init__(entity_group)
 
         children = self.children
 
@@ -379,7 +372,7 @@ class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
                  end_cut: int = 0) -> None:
         super().__init__(entity_group)
 
-        children = entity_group.children
+        children = self.children
 
         if start_cut > 0:
             for i in range(start_cut):
@@ -389,7 +382,7 @@ class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
             for i in range(end_cut):
                 del children[-1]
 
-        self.children = children
+        # self.children = children
 
 
 class AveragingEntityGroupDecorator(EntityGroupDecorator):
@@ -407,6 +400,6 @@ class AveragingEntityGroupDecorator(EntityGroupDecorator):
         tool = MathTool()
         averaging = tool.make_averaging(entity_group.children, x_axis, y_axis)
 
-        averaging.children = None
+        # averaging.children = None
 
         self.entities = averaging.entities

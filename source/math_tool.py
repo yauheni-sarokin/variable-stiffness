@@ -12,6 +12,8 @@ class MathTool:
                        y_property: EntityProperty) -> EntityGroup:
         """
         take man groups between which we have to find one average
+        :param y_property:
+        :param x_property:
         :param children_groups:
         :return:
         """
@@ -93,6 +95,8 @@ class MathTool:
         # todo MOCK ENTITY ALWAYS PUT FORCE DISPLACEMET
 
         entity_group = EntityGroup(EntityProperty.NO_GROUP)
+
+        # print(entity_group)
 
         # create mock entities
         # entities_list: List[Entity] = []

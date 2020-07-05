@@ -69,21 +69,21 @@ class Entity(ABC):
         self._time = time
         self._cycle = cycle
 
-    def __copy__(self):
-        """
-        Create a shallow copy byy copy.copy
-        primitives dont have to be copied
-        :return:
-        """
-
-        new = self.__class__(self._voltage,
-                             self._current,
-                             self._force,
-                             self._displacement,
-                             self._time,
-                             self._cycle)
-
-        return new
+    # def __copy__(self):
+    #     """
+    #     Create a shallow copy byy copy.copy
+    #     primitives dont have to be copied
+    #     :return:
+    #     """
+    #
+    #     new = self.__class__(self._voltage,
+    #                          self._current,
+    #                          self._force,
+    #                          self._displacement,
+    #                          self._time,
+    #                          self._cycle)
+    #
+    #     return new
 
     @property
     def voltage(self) -> float:
@@ -166,43 +166,43 @@ class EntityGroup(ABC):
         # default blue line
         self._color_line: str = Colors.RGBColor([0, 128, 255]).to_hex().hex
 
-    def __copy__(self):
-        """
-        shallow copy of the object
-
-        :return:
-        """
-        entity_property = self._entity_property
-        property_value = self._property_value
-
-        # entities have to be copied anyway
-        entities: List[Entity] = []
-
-        if len(self._entities) > 0:
-            for entity in self._entities:
-                copied_entity = copy.copy(entity)
-                entities.append(copied_entity)
-
-        # primitive
-        has_parent = self._has_parent
-        # not primitive, have to be the same parent
-        parent = None
-        if has_parent:
-            parent = self.parent
-
-        # primitive
-        has_children = self._has_children
-        # not primitive, but must be the same
-        children = None
-        if has_children:
-            children = self.children
-
-        # don't know if it is primitive
-        self._color_line = copy.copy(self._color_line)
-
-        new = self.__class__(entity_property)
-
-        return new
+    # def __copy__(self):
+    #     """
+    #     shallow copy of the object
+    #
+    #     :return:
+    #     """
+    #     entity_property = self._entity_property
+    #     property_value = self._property_value
+    #
+    #     # entities have to be copied anyway
+    #     entities: List[Entity] = []
+    #
+    #     if len(self._entities) > 0:
+    #         for entity in self._entities:
+    #             copied_entity = copy.copy(entity)
+    #             entities.append(copied_entity)
+    #
+    #     # primitive
+    #     has_parent = self._has_parent
+    #     # not primitive, have to be the same parent
+    #     parent = None
+    #     if has_parent:
+    #         parent = self.parent
+    #
+    #     # primitive
+    #     has_children = self._has_children
+    #     # not primitive, but must be the same
+    #     children = None
+    #     if has_children:
+    #         children = self.children
+    #
+    #     # don't know if it is primitive
+    #     self._color_line = copy.copy(self._color_line)
+    #
+    #     new = self.__class__(entity_property)
+    #
+    #     return new
 
     @property
     def color_line(self) -> str:
@@ -225,8 +225,12 @@ class EntityGroup(ABC):
 
     @parent.setter
     def parent(self, parent: EntityGroup):
-        self._has_parent = True
-        self._parent = parent
+        if parent is not None and isinstance(parent, EntityGroup):
+            self._has_parent = True
+            self._parent = parent
+        else:
+            self._has_parent = False
+            self._parent = None
 
     @property
     def has_children(self) -> bool:
@@ -386,9 +390,9 @@ class EntityGroupPlotter(ABC):
         self._entity_groups.extend(entity_groups)
 
     @abstractmethod
-    def plot_group(self, entity_group: EntityGroup,
-                   x_axis_property: EntityProperty,
-                   y_axis_property: EntityProperty) -> None:
+    def plot_entities_in_group(self, entity_group: EntityGroup,
+                               x_axis_property: EntityProperty,
+                               y_axis_property: EntityProperty) -> None:
         pass
 
     @abstractmethod
@@ -398,10 +402,10 @@ class EntityGroupPlotter(ABC):
         pass
 
     @abstractmethod
-    def plot_groups(self,
-                    entity_group_with_children: EntityGroup,
-                    x_axis_property: EntityProperty,
-                    y_axis_property: EntityProperty) -> None:
+    def plot_children(self,
+                      entity_group_with_children: EntityGroup,
+                      x_axis_property: EntityProperty,
+                      y_axis_property: EntityProperty) -> None:
         pass
 
 
@@ -414,6 +418,11 @@ To change children's property
 class EntityGroupDecorator(EntityGroup):
 
     def __init__(self, entity_group: EntityGroup) -> None:
+        """
+        Returns the object that contain THE SAME PARENT
+        but COPIED CHILDREN
+        :param entity_group:
+        """
 
         # entity property
         group_entity_property = entity_group.entity_property
@@ -423,21 +432,25 @@ class EntityGroupDecorator(EntityGroup):
         if entity_group.entity_property.value['has_value']:
             group_property_value = entity_group.property_value
 
-        # parent
+        # parent THE SAME AS ORIGINAL
         group_property_parent = None
         if entity_group.has_parent:
             group_property_parent = entity_group.parent
 
-        # children
+        # children COPIED
         group_property_children = None
-        if entity_group.has_parent:
-            group_property_children = entity_group.children
+        if entity_group._has_children:
+            group_property_children = copy.copy(entity_group.children)
 
         # initialize
         super().__init__(group_entity_property,
                          group_property_value,
                          group_property_parent,
                          group_property_children)
+
+        # post initialization
+        for entity in entity_group.entities:
+            self.append_entity(entity)
 
 #
 # """
