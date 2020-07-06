@@ -24,6 +24,18 @@ class ConcreteFileReader(FileReader):
 
         return ConcreteContent(content)
 
+    def parse_entity_groups_from_file(self) -> EntityGroup:
+        """
+        Reads file by path and uses concrete content to parse
+        entity groups from file
+        :param file:
+        :return:
+        """
+        file_content = self.parse_file_content()
+        group_from_content = file_content.get_entity_group_from_content()
+
+        return group_from_content
+
 
 class ConcreteContent(Content):
 
@@ -53,7 +65,7 @@ class ConcreteContent(Content):
             # 6th row is a number of cycle, int
             cycle = float(data[5].strip())
 
-            entity = ConcreteEntity(voltage, current, force, displacement, time, cycle)
+            entity = ConcreteFileEntity(voltage, current, force, displacement, time, cycle)
 
             # entities_list.append(entity)
 
@@ -62,7 +74,19 @@ class ConcreteContent(Content):
         return entity_group
 
 
-class ConcreteEntity(Entity):
+class ConcreteFileEntity(Entity):
+    """
+    Entity that come from file, can contain only
+    predefined file properties
+    """
+    pass
+
+
+class ConcreteExtendedEntity(Entity):
+    """
+    Entity that can be created upon file file elaboration
+    introduces new properties to the file
+    """
     pass
 
 

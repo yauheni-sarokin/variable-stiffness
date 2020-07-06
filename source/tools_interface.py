@@ -22,6 +22,10 @@ class FileReader(ABC):
 
         self._file = file
 
+    @property
+    def file(self):
+        return self._file
+
     @abstractmethod
     def parse_file_content(self) -> Content:
         pass
@@ -56,6 +60,9 @@ class EntityProperty(Enum):
     SLOPE_UP = {'name': 'slope up', 'units': 'no units', 'has_value': False}
     SLOPE_DOWN = {'name': 'slope down', 'units': 'no units', 'has_value': False}
 
+    #New propperties for extended entity
+    MODULUS = {'name': 'modulus', 'units': 'MPa', 'has_value': True}
+
 
 class Entity(ABC):
 
@@ -69,21 +76,7 @@ class Entity(ABC):
         self._time = time
         self._cycle = cycle
 
-    # def __copy__(self):
-    #     """
-    #     Create a shallow copy byy copy.copy
-    #     primitives dont have to be copied
-    #     :return:
-    #     """
-    #
-    #     new = self.__class__(self._voltage,
-    #                          self._current,
-    #                          self._force,
-    #                          self._displacement,
-    #                          self._time,
-    #                          self._cycle)
-    #
-    #     return new
+
 
     @property
     def voltage(self) -> float:
