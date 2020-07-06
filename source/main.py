@@ -26,20 +26,41 @@ if __name__ == '__main__':
 
     group = AveragingEntityGroupDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
-    print(len(group.entities))
+    # print(len(group.entities))
 
     group = CutEntitiesByXAxisDecorator(group, EntityProperty.DISPLACEMENT, x_start=0.03, x_end=0.2)
 
-    print(len(group.entities))
-
-    group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-
-    group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
-                                               EntityProperty.FORCE)
+    # print(len(group.entities))
 
     # group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     group_plotter.add_entity_group(group)
+
+    derivative1 = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
+                                               EntityProperty.FORCE)
+
+    group = LinearInterpolationEntityGroupDecorator(group)
+    group.color_line = Colors.RGBColor([255, 0, 0]).to_hex().hex
+
+    derivative2 = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
+                                               EntityProperty.FORCE)
+    derivative2.color_line = Colors.RGBColor([255, 0, 0]).to_hex().hex
+
+    group_plotter.add_entity_group(group)
+
+    plotter = ConcreteEntityGroupPlotter()
+    plotter.add_entity_group(derivative1)
+    plotter.add_entity_group(derivative2)
+    plotter.plot_added_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
+    # group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
+    # group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
+    #                                            EntityProperty.FORCE)
+
+    # group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
+    # group_plotter.add_entity_group(group)
     group_plotter.plot_added_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     import sys

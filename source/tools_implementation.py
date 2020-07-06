@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt
+from numpy import polyfit, polyval
 
 from math_tool import *
 from tools_interface import *
+
+from scipy.interpolate import *
 
 
 class ConcreteFileReader(FileReader):
@@ -267,8 +270,6 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         x = entity_group.get_array_of_properties(x_axis_property)
         y = entity_group.get_array_of_properties(y_axis_property)
 
-        print(f"{x[0]} _ {x[-1]}]")
-
         fig, ax = plt.subplots()
 
         ax.plot(x, y)
@@ -446,5 +447,25 @@ class CutEntitiesByXAxisDecorator(EntityGroupDecorator):
         for entity in self.entities:
             if x_start < entity.get_property(x_axis) < x_end:
                 new_entities.append(entity)
+
+        self.entities = new_entities
+
+
+class LinearInterpolationEntityGroupDecorator(EntityGroupDecorator):
+    def __init__(self, entity_group: EntityGroup) -> None:
+        super().__init__(entity_group)
+
+        x_axis = self.get_array_of_properties(EntityProperty.DISPLACEMENT)
+        y_axis = self.get_array_of_properties(EntityProperty.FORCE)
+
+        p1 = polyfit(x_axis, y_axis, 1)
+
+        y_fitted = polyval(p1, x_axis)
+
+        new_entities: List[Entity] = []
+
+        for x, y in zip(x_axis, y_fitted):
+            entity = Entity(0, 0, y, x, 0, 0)
+            new_entities.append(entity)
 
         self.entities = new_entities
