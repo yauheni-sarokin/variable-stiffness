@@ -263,8 +263,11 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         :return:
         """
         # get x, y array
+        # print(len(entity_group.entities))
         x = entity_group.get_array_of_properties(x_axis_property)
         y = entity_group.get_array_of_properties(y_axis_property)
+
+        print(f"{x[0]} _ {x[-1]}]")
 
         fig, ax = plt.subplots()
 
@@ -424,3 +427,24 @@ class DerivativeEntityGroupDecorator(EntityGroupDecorator):
         entity_group_derivative = tool.make_derivative(self, x_axis, y_axis)
 
         self.entities = entity_group_derivative.entities
+
+
+class CutEntitiesByXAxisDecorator(EntityGroupDecorator):
+    """
+    Cut entities within x axis
+    """
+
+    def __init__(self,
+                 entity_group: EntityGroup,
+                 x_axis: EntityProperty,
+                 x_start: float,
+                 x_end: float) -> None:
+        super().__init__(entity_group)
+
+        new_entities: List[Entity] = []
+
+        for entity in self.entities:
+            if x_start < entity.get_property(x_axis) < x_end:
+                new_entities.append(entity)
+
+        self.entities = new_entities

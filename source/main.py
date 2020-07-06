@@ -26,6 +26,12 @@ if __name__ == '__main__':
 
     group = AveragingEntityGroupDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
+    print(len(group.entities))
+
+    group = CutEntitiesByXAxisDecorator(group, EntityProperty.DISPLACEMENT, x_start=0.03, x_end=0.2)
+
+    print(len(group.entities))
+
     group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
