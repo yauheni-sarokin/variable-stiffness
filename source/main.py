@@ -13,8 +13,8 @@ if __name__ == '__main__':
     group = group_creator.divide_entities_by_voltage(group_from_content)
 
     # take 1 voltage group
-    voltage_group = 1
-    group = group.children[1]
+    voltage_group = 6
+    group = group.children[voltage_group]
 
     group = group_creator.divide_entities_by_slope(group)
 
@@ -27,6 +27,14 @@ if __name__ == '__main__':
     group = AveragingEntityGroupDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
+    group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
+                                               EntityProperty.FORCE)
+
+    # group_plotter.plot_entities_in_group(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+
+    group_plotter.add_entity_group(group)
+    group_plotter.plot_added_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     import sys
 

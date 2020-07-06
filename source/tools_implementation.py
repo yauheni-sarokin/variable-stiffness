@@ -253,7 +253,8 @@ class ConcreteEntityGroupCreator(EntityGroupCreator):
 class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
     def plot_entities_in_group(self, entity_group: EntityGroup,
-                               x_axis_property: EntityProperty, y_axis_property: EntityProperty) -> None:
+                               x_axis_property: EntityProperty,
+                               y_axis_property: EntityProperty) -> None:
         """
         Plot entity groups from the pool
         :param entity_group:
@@ -311,7 +312,8 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
         plt.show()
 
-    def plot_children(self, entity_group_with_children: EntityGroup, x_axis_property: EntityProperty,
+    def plot_children(self, entity_group_with_children: EntityGroup,
+                      x_axis_property: EntityProperty,
                       y_axis_property: EntityProperty) -> None:
 
         entity_groups = entity_group_with_children.children
@@ -398,8 +400,27 @@ class AveragingEntityGroupDecorator(EntityGroupDecorator):
         super().__init__(entity_group)
 
         tool = MathTool()
-        averaging = tool.make_averaging(entity_group.children, x_axis, y_axis)
+        averaging = tool.make_averaging(self.children, x_axis, y_axis)
 
         # averaging.children = None
 
         self.entities = averaging.entities
+
+
+class DerivativeEntityGroupDecorator(EntityGroupDecorator):
+    """
+    Decorator reads all entities as an array and return new
+    entity group where all the entities are derivative
+    """
+
+    def __init__(self,
+                 entity_group: EntityGroup,
+                 x_axis: EntityProperty,
+                 y_axis: EntityProperty) -> None:
+        super().__init__(entity_group)
+
+        tool = MathTool()
+
+        entity_group_derivative = tool.make_derivative(self, x_axis, y_axis)
+
+        self.entities = entity_group_derivative.entities

@@ -1,7 +1,9 @@
+from statistics import mean
 from typing import List
-from statistics import stdev, mean
-from tools_interface import Entity, EntityGroup, EntityProperty
+
 import numpy as np
+
+from tools_interface import Entity, EntityGroup, EntityProperty
 
 
 class MathTool:
@@ -9,9 +11,11 @@ class MathTool:
     def make_averaging(self,
                        children_groups: List[EntityGroup],
                        x_property: EntityProperty,
-                       y_property: EntityProperty) -> EntityGroup:
+                       y_property: EntityProperty,
+                       precision: int = 150) -> EntityGroup:
         """
         take man groups between which we have to find one average
+        :param precision: in how may points to subdivide graph
         :param y_property:
         :param x_property:
         :param children_groups:
@@ -25,7 +29,7 @@ class MathTool:
         # y values
 
         # set precision 100
-        _precision = 150
+        _precision = precision
 
         x_sets: List[List[float]] = []
         y_sets: List[List[float]] = []
@@ -60,7 +64,7 @@ class MathTool:
 
         x_set_new: List[float] = np.linspace(x_starting, x_ending, _precision)
         # too delete onw line below
-        print(f"length of x after linspace {len(x_set_new)}")
+        # print(f"length of x after linspace {len(x_set_new)}")
 
         # for this x range we have to find all possible y's
         # collect many y's
@@ -140,3 +144,34 @@ class MathTool:
                     y = a * x + b
                     break
         return y
+
+    def make_derivative(self, entity_group: EntityGroup, x_axis, y_axis) -> EntityGroup:
+        """
+        Derivative have to return ent groupps with new properties,
+        since dxdy (modulus) is a new property
+        :param entity_group:
+        :param x_axis:
+        :param y_axis:
+        :return:
+        """
+        # getting entities properties as an array
+        x_array = entity_group.get_array_of_properties(x_axis)
+        y_array = entity_group.get_array_of_properties(y_axis)
+        dy_dx = np.diff(y_array) / np.diff(x_array)
+
+        # find intermediate values array thar are less at -1 point
+        x_diff_axis: List[float] = []
+        for i in range(len(x_array) - 1):
+            x = (x_array[i] + x_array[i + 1]) / 2
+            x_diff_axis.append(x)
+
+        # todo MOCK ENTITY ALWAYS PUT FORCE DISPLACEMET
+
+        entity_group = EntityGroup(EntityProperty.NO_GROUP)
+
+        for x, y in zip(x_diff_axis, dy_dx):
+            entity = Entity(0., 0., y, x, 0., 0.)
+            # entities_list.append(entity)
+            entity_group.append_entity(entity)
+
+        return entity_group
