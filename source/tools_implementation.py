@@ -340,6 +340,61 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
         plt.show()
 
+    def plot_added_groups_with_cb(self,
+                                  x_axis_property: EntityProperty,
+                                  y_axis_property: EntityProperty
+                                  ) -> None:
+
+        entity_groups = self._entity_groups
+
+        fig, ax = plt.subplots()
+
+        # todo delete, rewrite 2 following lines
+        colors = []
+        voltages = []
+
+        for entity_group in entity_groups:
+            # get x, y array
+            x = entity_group.get_array_of_properties(x_axis_property)
+            y = entity_group.get_array_of_properties(y_axis_property)
+            # hex_color = entity_group.color_line.to_hex().hex
+            color_line = entity_group.color_line
+            # ax.plot(x, y, color=hex_color)
+            ax.plot(x, y, color=color_line)
+
+            colors.append(entity_group.color_line)
+            voltages.append(entity_group.property_value)
+
+        x_units = x_axis_property.value['units']
+        x_name = x_axis_property.value['name']
+        y_units = y_axis_property.value['units']
+        y_name = y_axis_property.value['name']
+        title = f"{y_name} - {x_name}"
+
+        ax.set(xlabel=x_units, ylabel=y_units, title=title)
+
+        # adding color bars
+        # ====================
+        import matplotlib.colors as mcolors
+        import matplotlib.cm
+        from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+        cmap, norm = mcolors.from_levels_and_colors(
+            range(len(colors) + 1),
+            colors
+        )
+
+        sm = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
+        sm.set_array([])
+
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        cbar = fig.colorbar(sm, cax=cax, ticks=range(len(colors)))
+        cbar.ax.set_yticklabels(voltages)
+        # ====================
+        plt.show()
+
     def plot_children(self, entity_group_with_children: EntityGroup,
                       x_axis_property: EntityProperty,
                       y_axis_property: EntityProperty) -> None:

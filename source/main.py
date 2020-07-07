@@ -19,9 +19,6 @@ if __name__ == '__main__':
 
     group = ColorEntityGroupDecorator(group)
 
-    for child in group.children:
-        print(child.color_line)
-
     groups: List[EntityGroup] = []
 
     for group in group.children:
@@ -38,7 +35,7 @@ if __name__ == '__main__':
 
     plotter.add_entity_groups(groups)
     #todo plot with colorbar
-    plotter.plot_added_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    plotter.plot_added_groups_with_cb(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     import sys
 
