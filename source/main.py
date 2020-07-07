@@ -28,13 +28,18 @@ if __name__ == '__main__':
         group = AveragingEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
                                               EntityProperty.FORCE)
 
-        group = CutEntitiesByXAxisDecorator(group, EntityProperty.DISPLACEMENT, x_start=0, x_end=0.03)
+        group = CutEntitiesByXAxisDecorator(group, EntityProperty.DISPLACEMENT, x_start=0,
+                                            x_end=0.03)
         group = LinearInterpolationEntityGroupDecorator(group)
-        group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+        group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
+                                               EntityProperty.FORCE)
         groups.append(group)
 
+    # assign to group a new children
+    # group.children = groups
+
     plotter.add_entity_groups(groups)
-    #todo plot with colorbar
+    # todo plot with colorbar
     plotter.plot_added_groups_with_cb(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     import sys

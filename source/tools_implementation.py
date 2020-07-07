@@ -82,17 +82,14 @@ class ConcreteFileEntity(Entity):
     pass
 
 
-class ConcreteExtendedEntity(Entity):
-    """
-    Entity that can be created upon file file elaboration
-    introduces new properties to the file
-    """
-    pass
+
 
 
 """
 Разбиение сущностей по группам
 """
+
+
 
 
 class EntityGroupByVoltage(EntityGroup):
@@ -351,7 +348,7 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
 
         # todo delete, rewrite 2 following lines
         colors = []
-        voltages = []
+        property_values = []
 
         for entity_group in entity_groups:
             # get x, y array
@@ -363,7 +360,9 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
             ax.plot(x, y, color=color_line)
 
             colors.append(entity_group.color_line)
-            voltages.append(entity_group.property_value)
+            prop_value_string = f"{entity_group.property_value} " \
+                                f"{entity_group.entity_property.value['units']}"
+            property_values.append(prop_value_string)
 
         x_units = x_axis_property.value['units']
         x_name = x_axis_property.value['name']
@@ -391,7 +390,7 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         cax = divider.append_axes("right", size="5%", pad=0.05)
 
         cbar = fig.colorbar(sm, cax=cax, ticks=range(len(colors)))
-        cbar.ax.set_yticklabels(voltages)
+        cbar.ax.set_yticklabels(property_values)
         # ====================
         plt.show()
 
@@ -421,6 +420,7 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         ax.set(xlabel=x_units, ylabel=y_units, title=title)
 
         plt.show()
+
 
 
 """
