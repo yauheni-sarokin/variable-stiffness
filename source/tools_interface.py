@@ -445,6 +445,8 @@ class EntityGroupDecorator(EntityGroup):
         for entity in entity_group.entities:
             self.append_entity(entity)
 
+        self.color_line = entity_group.color_line
+
 #
 # """
 # This class implements FINAL operations with

@@ -403,6 +403,7 @@ class CutChildrenEntityGroupDecorator(EntityGroupDecorator):
         super().__init__(entity_group)
 
         children = self.children
+        # self.color_line = entity_group.color_line
 
         if start_cut > 0:
             for i in range(start_cut):

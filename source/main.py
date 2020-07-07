@@ -17,13 +17,17 @@ if __name__ == '__main__':
 
     group = CutChildrenEntityGroupDecorator(group, end_cut=1)
 
-    # group = ColorEntityGroupDecorator(group)
+    group = ColorEntityGroupDecorator(group)
+
+    for child in group.children:
+        print(child.color_line)
 
     groups: List[EntityGroup] = []
 
     for group in group.children:
         group = creator.divide_entities_by_slope(group)
         group = CutChildrenEntityGroupDecorator(group, start_cut=15)
+
         group = AveragingEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
                                               EntityProperty.FORCE)
 
@@ -32,10 +36,8 @@ if __name__ == '__main__':
         group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
         groups.append(group)
 
-
     plotter.add_entity_groups(groups)
     plotter.plot_added_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
-
 
     import sys
 
