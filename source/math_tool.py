@@ -3,7 +3,7 @@ from typing import List
 
 import numpy as np
 
-from tools_interface import Entity, EntityGroup, EntityProperty
+from tools_interface import Entity, EntityGroup, EntityProperty, DerivativeEntity
 
 
 class MathTool:
@@ -167,11 +167,15 @@ class MathTool:
 
         # todo MOCK ENTITY ALWAYS PUT FORCE DISPLACEMET
 
-        entity_group = EntityGroup(EntityProperty.NO_GROUP)
+        new_entity_group = EntityGroup(EntityProperty.NO_GROUP)
+
+        iterator = 0
 
         for x, y in zip(x_diff_axis, dy_dx):
-            entity = Entity(0., 0., y, x, 0., 0.)
+            # entity = Entity(0., 0., y, x, 0., 0.)
+            derivative_entity = DerivativeEntity(entity_group.entities[iterator], x, dy_dx)
             # entities_list.append(entity)
-            entity_group.append_entity(entity)
+            new_entity_group.append_entity(derivative_entity)
+            iterator += 1
 
-        return entity_group
+        return new_entity_group

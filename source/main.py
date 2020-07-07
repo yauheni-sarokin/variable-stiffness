@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     plotter.add_entity_groups(groups)
     # todo plot with colorbar
-    plotter.plot_added_groups_with_cb(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+    plotter.plot_added_groups_with_cb(EntityProperty.DERIVATIVE_X, EntityProperty.DERIVATIVE_Y)
 
     import sys
 

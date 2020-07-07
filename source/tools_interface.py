@@ -60,8 +60,11 @@ class EntityProperty(Enum):
     SLOPE_UP = {'name': 'slope up', 'units': 'no units', 'has_value': False}
     SLOPE_DOWN = {'name': 'slope down', 'units': 'no units', 'has_value': False}
 
-    #New propperties for extended entity
+    # New propperties for extended entity
     MODULUS = {'name': 'modulus', 'units': 'MPa', 'has_value': True}
+
+    DERIVATIVE_Y = {'name': 'y', 'units': 'no units', 'has_value': True}
+    DERIVATIVE_X = {'name': 'x', 'units': 'no units', 'has_value': True}
 
 
 class Entity(ABC):
@@ -75,8 +78,6 @@ class Entity(ABC):
         self._displacement = displacement
         self._time = time
         self._cycle = cycle
-
-
 
     @property
     def voltage(self) -> float:
@@ -117,6 +118,35 @@ class Entity(ABC):
             return self._cycle
         else:
             pass
+
+
+class DerivativeEntity(Entity):
+
+    def __init__(self, entity: Entity, x: float, dy_dx: float) -> None:
+        super().__init__(entity.voltage, entity.current,
+                         entity.force, entity.displacement,
+                         entity.time, entity.cycle)
+        self._x = x
+        self._dy_dx = dy_dx
+
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def dy_dx(self):
+        return self._dy_dx
+
+    def get_property(self, entity_property: EntityProperty) -> float:
+        get_property = super().get_property(entity_property)
+
+        if get_property is None:
+            if entity_property == entity_property.DERIVATIVE_X:
+                return self._x
+            elif entity_property == entity_property.DERIVATIVE_Y:
+                return self._dy_dx
+        else:
+            return get_property
 
 
 """
