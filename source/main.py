@@ -37,6 +37,7 @@ if __name__ == '__main__':
         groups.append(group)
 
     plotter.add_entity_groups(groups)
+    #todo plot with colorbar
     plotter.plot_added_groups(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     import sys
