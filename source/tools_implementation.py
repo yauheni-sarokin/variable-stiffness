@@ -549,3 +549,16 @@ class LinearInterpolationEntityGroupDecorator(EntityGroupDecorator):
             new_entities.append(entity)
 
         self.entities = new_entities
+
+class DerivativesToEntitiesGroupDecorator():
+    """
+    This decorator converts group with derivatives
+    (modulus a example) to new EntityGroup with assigned
+    values, so before it was x - modulus, y displacement
+    cb = colors by voltage, and each entity group contains voltage value
+
+    now - y - modulus, x applied voltage
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
