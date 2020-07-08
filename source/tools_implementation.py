@@ -82,14 +82,9 @@ class ConcreteFileEntity(Entity):
     pass
 
 
-
-
-
 """
 Разбиение сущностей по группам
 """
-
-
 
 
 class EntityGroupByVoltage(EntityGroup):
@@ -371,6 +366,7 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         title = f"{y_name} - {x_name}"
 
         ax.set(xlabel=x_units, ylabel=y_units, title=title)
+        # ax.set(xlabel='mm', ylabel='d force / d displacement', title='force - displacement derivative - displacement')
 
         # adding color bars
         # ====================
@@ -420,7 +416,6 @@ class ConcreteEntityGroupPlotter(EntityGroupPlotter):
         ax.set(xlabel=x_units, ylabel=y_units, title=title)
 
         plt.show()
-
 
 
 """
@@ -549,6 +544,7 @@ class LinearInterpolationEntityGroupDecorator(EntityGroupDecorator):
             new_entities.append(entity)
 
         self.entities = new_entities
+
 
 class DerivativesToEntitiesGroupDecorator():
     """

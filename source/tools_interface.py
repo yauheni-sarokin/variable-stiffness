@@ -49,7 +49,7 @@ class Content(ABC):
 # Enumeration of entity properties
 class EntityProperty(Enum):
     VOLTAGE = {'name': 'voltage', 'units': 'V', 'has_value': True}
-    CURRENT = {'name': 'current', 'units': 'mA/uA', 'has_value': True}
+    CURRENT = {'name': 'current', 'units': 'mA', 'has_value': True}
     FORCE = {'name': 'force', 'units': 'uN', 'has_value': True}
     DISPLACEMENT = {'name': 'displacement', 'units': 'mm', 'has_value': True}
     TIME = {'name': 'time', 'units': 'ms', 'has_value': True}

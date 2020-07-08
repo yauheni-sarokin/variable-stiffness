@@ -173,7 +173,7 @@ class MathTool:
 
         for x, y in zip(x_diff_axis, dy_dx):
             # entity = Entity(0., 0., y, x, 0., 0.)
-            derivative_entity = DerivativeEntity(entity_group.entities[iterator], x, dy_dx)
+            derivative_entity = DerivativeEntity(entity_group.entities[iterator], x, y)
             # entities_list.append(entity)
             new_entity_group.append_entity(derivative_entity)
             iterator += 1
