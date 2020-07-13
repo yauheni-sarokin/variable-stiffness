@@ -546,6 +546,63 @@ class LinearInterpolationEntityGroupDecorator(EntityGroupDecorator):
         self.entities = new_entities
 
 
+class EntitiesToZeroAxisDecorator(EntityGroupDecorator):
+
+    def __init__(self,
+                 entity_group: EntityGroup,
+                 x_axis: EntityProperty,
+                 y_axis: EntityProperty) -> None:
+        super().__init__(entity_group)
+
+        print(len(self.entities) < 1)
+        print(f'self entities {len(self.entities)}')
+        assert len(self.entities) > 0, 'Less than 1 entity in a group'
+
+        # taking all entities inside children group or any other
+        # group where only entities needed to elaborate
+        entities = self.entities
+
+        # first entity with x and y take as reference
+        # this value is decrement to bring to zero
+        x_decrement = entities[0].get_property(x_axis)
+        y_decrement = entities[0].get_property(y_axis)
+
+        new_entities: List[Entity] = []
+
+        for entity in entities:
+            current_x = entity.get_property(x_axis)
+            current_y = entity.get_property(y_axis)
+
+            new_x = current_x - x_decrement
+            new_y = current_y - y_decrement
+
+            # dictionary for automatic update
+            entity_values = {
+                EntityProperty.VOLTAGE: entity.voltage,
+                EntityProperty.CURRENT: entity.current,
+                EntityProperty.FORCE: entity.force,
+                EntityProperty.DISPLACEMENT: entity.displacement,
+                EntityProperty.TIME: entity.time,
+                EntityProperty.CYCLE: entity.cycle
+            }
+
+            entity_values[x_axis] = new_x
+            entity_values[y_axis] = new_y
+
+            new_entity = Entity(
+                entity_values[EntityProperty.VOLTAGE],
+                entity_values[EntityProperty.CURRENT],
+                entity_values[EntityProperty.FORCE],
+                entity_values[EntityProperty.DISPLACEMENT],
+                entity_values[EntityProperty.TIME],
+                entity_values[EntityProperty.CYCLE]
+            )
+
+            new_entities.append(new_entity)
+
+        self.entities = new_entities
+
+
 class DerivativesToEntitiesGroupDecorator():
     """
     This decorator converts group with derivatives

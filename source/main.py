@@ -31,8 +31,10 @@ if __name__ == '__main__':
         group = CutEntitiesByXAxisDecorator(group, EntityProperty.DISPLACEMENT, x_start=0,
                                             x_end=0.03)
         group = LinearInterpolationEntityGroupDecorator(group)
-        group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
-                                               EntityProperty.FORCE)
+        print(group)
+        group = EntitiesToZeroAxisDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
+        # group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
+        #                                        EntityProperty.FORCE)
         groups.append(group)
 
     # assign to group a new children
@@ -40,7 +42,8 @@ if __name__ == '__main__':
 
     plotter.add_entity_groups(groups)
     # todo plot with colorbar
-    plotter.plot_added_groups_with_cb(EntityProperty.DERIVATIVE_X, EntityProperty.DERIVATIVE_Y)
+    # plotter.plot_added_groups_with_cb(EntityProperty.DERIVATIVE_X, EntityProperty.DERIVATIVE_Y)
+    plotter.plot_added_groups_with_cb(EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
 
     import sys
 
