@@ -30,8 +30,8 @@ if __name__ == '__main__':
 
         group = CutEntitiesByXAxisDecorator(group, EntityProperty.DISPLACEMENT, x_start=0,
                                             x_end=0.03)
-        group = LinearInterpolationEntityGroupDecorator(group)
-        print(group)
+        # group = LinearInterpolationEntityGroupDecorator(group)
+
         group = EntitiesToZeroAxisDecorator(group, EntityProperty.DISPLACEMENT, EntityProperty.FORCE)
         # group = DerivativeEntityGroupDecorator(group, EntityProperty.DISPLACEMENT,
         #                                        EntityProperty.FORCE)

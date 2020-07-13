@@ -554,8 +554,6 @@ class EntitiesToZeroAxisDecorator(EntityGroupDecorator):
                  y_axis: EntityProperty) -> None:
         super().__init__(entity_group)
 
-        print(len(self.entities) < 1)
-        print(f'self entities {len(self.entities)}')
         assert len(self.entities) > 0, 'Less than 1 entity in a group'
 
         # taking all entities inside children group or any other
